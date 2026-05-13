@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">ApexMark</string>
+    <string name="app_subtitle">Markdown → نص منسق · تحويل بنقرة واحدة</string>
+
+    <!-- Convert flow -->
+    <string name="convert_clipboard">تحويل الحافظة</string>
+    <string name="convert_clipboard_content">تحويل محتوى الحافظة</string>
+    <string name="converted_success">✓ تم التحويل إلى تنسيق Word</string>
+    <string name="converted_success_with_count">✓ تم التحويل إلى تنسيق Word (%d حرف)</string>
+    <string name="converted_chars">✓ تم تحويل %d حرف</string>
+    <string name="clipboard_empty">الحافظة فارغة</string>
+    <string name="not_markdown">المحتوى لا يبدو مثل Markdown</string>
+    <string name="not_markdown_skipped">المحتوى لا يبدو مثل Markdown، تم التخطي</string>
+    <string name="content_too_large">المحتوى كبير جداً (%s ميغابايت)</string>
+    <string name="content_too_large_retry">المحتوى كبير جداً (%s ميغابايت)، يرجى التقليل وإعادة المحاولة</string>
+    <string name="convert_error">خطأ في التحويل: %s</string>
+    <string name="converting">جارٍ التحويل…</string>
+    <string name="convert_done">اكتمل التحويل</string>
+    <string name="chars_to_richtext">%d حرف → نص منسق</string>
+
+    <!-- Floating bubble -->
+    <string name="bubble_running">ApexMark قيد التشغيل</string>
+    <string name="bubble_description">انقر على الفقاعة العائمة لتحويل Markdown → نص منسق</string>
+    <string name="bubble_stop">إغلاق الفقاعة العائمة</string>
+    <string name="bubble_started">تم تشغيل الفقاعة العائمة</string>
+    <string name="notification_channel_name">محوّل ApexMark العائم</string>
+    <string name="notification_channel_desc">يبقي خدمة الفقاعة العائمة قيد التشغيل</string>
+    <string name="notification_convert_action">تحويل الآن</string>
+
+    <!-- Overlay permission -->
+    <string name="overlay_permission_needed">إذن \"العرض فوق التطبيقات الأخرى\" مطلوب</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">مرحباً بك في ApexMark</string>
+    <string name="onboarding_desc">لتمكين تحويل Markdown بنقرة واحدة في أي وقت، يحتاج ApexMark إلى الأذونات التالية:</string>
+    <string name="permission_overlay_title">إذن العرض العائم</string>
+    <string name="permission_overlay_desc">عرض زر تحويل فوق التطبيقات الأخرى، انقر للتحويل بعد النسخ.</string>
+    <string name="permission_clipboard_title">الوصول إلى الحافظة</string>
+    <string name="permission_clipboard_desc">قراءة نص Markdown المنسوخ وتحويله إلى نص منسق. لا حاجة لإذن إضافي.</string>
+    <string name="privacy_notice">ApexMark يقرأ الحافظة فقط عند النقر. لا مراقبة في الخلفية ولا رفع بيانات. جميع التحويلات تتم محلياً.</string>
+    <string name="get_started">ابدأ</string>
+    <string name="permission_granted">مفعّل</string>
+    <string name="go_enable">تفعيل</string>
+
+    <!-- Main screen -->
+    <string name="theme">المظهر</string>
+    <string name="quick_tools">أدوات سريعة</string>
+    <string name="start_bubble">تشغيل الفقاعة العائمة</string>
+    <string name="start_bubble_desc">الفقاعة العائمة + زر التحويل في شريط الإشعارات، متاح في أي وقت</string>
+    <string name="usage_guide">كيفية الاستخدام</string>
+    <string name="usage_step_1">انقر على \"تشغيل الفقاعة العائمة\" أعلاه للتفعيل</string>
+    <string name="usage_step_2">انسخ نص Markdown من أدوات الدردشة الذكية</string>
+    <string name="usage_step_3">انقر على الفقاعة أو زر \"تحويل\" في شريط الإشعارات</string>
+    <string name="usage_step_4">الصق في WeChat, WPS, Feishu, DingTalk</string>
+
+    <!-- Theme -->
+    <string name="appearance_settings">المظهر</string>
+    <string name="choose_theme_desc">اختر نمط الواجهة المفضل لديك</string>
+    <string name="theme_system">النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
+
+    <!-- Document list -->
+    <string name="search_documents">البحث في المستندات…</string>
+    <string name="markdown_editor">محرر Markdown</string>
+    <string name="search">بحث</string>
+    <string name="new_document">مستند جديد</string>
+    <string name="no_documents">لا توجد مستندات بعد</string>
+    <string name="create_first_document">انقر الزر في أسفل اليمين لإنشاء أول مستند</string>
+    <string name="pinned">مثبّت</string>
+    <string name="untitled_document">مستند بدون عنوان</string>
+    <string name="pin">تثبيت</string>
+    <string name="delete">حذف</string>
+    <string name="char_count">%d حرف</string>
+    <string name="delete_document">حذف المستند</string>
+    <string name="delete_document_confirm">هل أنت متأكد من حذف \"%s\"؟ لا يمكن التراجع عن هذا.</string>
+    <string name="just_now">الآن</string>
+    <string name="minutes_ago">منذ %d دقيقة</string>
+    <string name="hours_ago">منذ %d ساعة</string>
+    <string name="days_ago">منذ %d يوم</string>
+
+    <!-- Editor -->
+    <string name="enter_title_hint">أدخل العنوان…</string>
+    <string name="back">رجوع</string>
+    <string name="edit">تحرير</string>
+    <string name="preview">معاينة</string>
+    <string name="copy_rich_text">نسخ النص المنسق</string>
+    <string name="more">المزيد</string>
+    <string name="export_word">تصدير كـ Word</string>
+    <string name="export_html">تصدير كـ HTML</string>
+    <string name="export_pdf">تصدير كـ PDF</string>
+    <string name="editor_placeholder">ابدأ تحرير Markdown…\n\nالصيغ المدعومة:\n# عنوان\n**غامق** *مائل*\n- قائمة\n> اقتباس\n`كود`\n| جدول |</string>
+    <string name="share_file">مشاركة الملف</string>
+
+    <!-- Toolbar -->
+    <string name="toolbar_heading">عنوان</string>
+    <string name="toolbar_bold">غامق</string>
+    <string name="toolbar_italic">مائل</string>
+    <string name="toolbar_strikethrough">يتوسطه خط</string>
+    <string name="toolbar_code">كود</string>
+    <string name="toolbar_quote">اقتباس</string>
+    <string name="toolbar_unordered_list">قائمة نقطية</string>
+    <string name="toolbar_ordered_list">قائمة مرقمة</string>
+    <string name="toolbar_table">جدول</string>
+    <string name="toolbar_table_template">\n| عمود 1 | عمود 2 | عمود 3 |\n| --- | --- | --- |\n| محتوى | محتوى | محتوى |\n</string>
+    <string name="toolbar_horizontal_rule">فاصل</string>
+    <string name="toolbar_link">رابط</string>
+    <string name="toolbar_image">صورة</string>
+    <string name="toolbar_code_block">كتلة كود</string>
+    <string name="toolbar_task_list">قائمة مهام</string>
+
+    <!-- Export results -->
+    <string name="copied_rich_text">تم نسخ النص المنسق إلى الحافظة</string>
+    <string name="export_html_success">تم تصدير HTML بنجاح</string>
+    <string name="export_html_error">فشل تصدير HTML: %s</string>
+    <string name="export_word_success">تم تصدير Word بنجاح</string>
+    <string name="export_word_error">فشل تصدير Word: %s</string>
+    <string name="export_pdf_started">بدأ تصدير PDF</string>
+    <string name="export_pdf_error">فشل تصدير PDF</string>
+
+    <!-- Common -->
+    <string name="cancel">إلغاء</string>
+    <string name="confirm">تأكيد</string>
+    <string name="close">إغلاق</string>
+    <string name="copy">نسخ</string>
+</resources>

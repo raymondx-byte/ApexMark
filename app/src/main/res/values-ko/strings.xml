@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">ApexMark</string>
+    <string name="app_subtitle">Markdown → 서식 있는 텍스트 · 원탭 변환</string>
+
+    <!-- Convert flow -->
+    <string name="convert_clipboard">클립보드 변환</string>
+    <string name="convert_clipboard_content">클립보드 내용 변환</string>
+    <string name="converted_success">✓ Word 형식으로 변환됨</string>
+    <string name="converted_success_with_count">✓ Word 형식으로 변환됨 (%d자)</string>
+    <string name="converted_chars">✓ %d자 변환됨</string>
+    <string name="clipboard_empty">클립보드가 비어 있습니다</string>
+    <string name="not_markdown">Markdown이 아닌 것 같습니다</string>
+    <string name="not_markdown_skipped">Markdown이 아닌 것 같아 건너뛰었습니다</string>
+    <string name="content_too_large">콘텐츠가 너무 큽니다 (%s MB)</string>
+    <string name="content_too_large_retry">콘텐츠가 너무 큽니다 (%s MB), 줄인 후 다시 시도하세요</string>
+    <string name="convert_error">변환 오류: %s</string>
+    <string name="converting">변환 중…</string>
+    <string name="convert_done">변환 완료</string>
+    <string name="chars_to_richtext">%d자 → 서식 있는 텍스트</string>
+
+    <!-- Floating bubble -->
+    <string name="bubble_running">ApexMark 실행 중</string>
+    <string name="bubble_description">플로팅 버블을 탭하여 Markdown → 서식 있는 텍스트로 변환</string>
+    <string name="bubble_stop">플로팅 버블 닫기</string>
+    <string name="bubble_started">플로팅 버블 시작됨</string>
+    <string name="notification_channel_name">ApexMark 플로팅 변환기</string>
+    <string name="notification_channel_desc">플로팅 버블 서비스를 유지합니다</string>
+    <string name="notification_convert_action">지금 변환</string>
+
+    <!-- Overlay permission -->
+    <string name="overlay_permission_needed">\"다른 앱 위에 표시\" 권한이 필요합니다</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">ApexMark에 오신 것을 환영합니다</string>
+    <string name="onboarding_desc">언제든 원탭으로 Markdown을 변환하려면 ApexMark에 다음 권한이 필요합니다:</string>
+    <string name="permission_overlay_title">오버레이 권한</string>
+    <string name="permission_overlay_desc">다른 앱 위에 변환 버튼을 표시하고, 복사 후 탭하여 변환합니다.</string>
+    <string name="permission_clipboard_title">클립보드 접근</string>
+    <string name="permission_clipboard_desc">복사한 Markdown 텍스트를 읽어 서식 있는 텍스트로 변환합니다. 추가 권한이 필요하지 않습니다.</string>
+    <string name="privacy_notice">ApexMark은 탭할 때만 클립보드를 읽습니다. 백그라운드 모니터링이나 데이터 업로드가 없습니다. 모든 변환은 로컬에서 수행됩니다.</string>
+    <string name="get_started">시작하기</string>
+    <string name="permission_granted">활성화됨</string>
+    <string name="go_enable">활성화</string>
+
+    <!-- Main screen -->
+    <string name="theme">테마</string>
+    <string name="quick_tools">빠른 도구</string>
+    <string name="start_bubble">플로팅 버블 시작</string>
+    <string name="start_bubble_desc">플로팅 버블 + 알림 바 변환 버튼, 언제든 탭</string>
+    <string name="usage_guide">사용 방법</string>
+    <string name="usage_step_1">위의 \"플로팅 버블 시작\"을 탭하여 활성화</string>
+    <string name="usage_step_2">AI 채팅 도구에서 Markdown 텍스트 복사</string>
+    <string name="usage_step_3">플로팅 버블 또는 알림 바 \"변환\" 버튼을 탭</string>
+    <string name="usage_step_4">WeChat, WPS, Feishu, DingTalk에 붙여넣기</string>
+
+    <!-- Theme -->
+    <string name="appearance_settings">외관</string>
+    <string name="choose_theme_desc">선호하는 인터페이스 스타일을 선택하세요</string>
+    <string name="theme_system">시스템</string>
+    <string name="theme_light">라이트</string>
+    <string name="theme_dark">다크</string>
+
+    <!-- Document list -->
+    <string name="search_documents">문서 검색…</string>
+    <string name="markdown_editor">Markdown 편집기</string>
+    <string name="search">검색</string>
+    <string name="new_document">새 문서</string>
+    <string name="no_documents">문서가 없습니다</string>
+    <string name="create_first_document">오른쪽 하단 버튼을 탭하여 첫 문서를 만드세요</string>
+    <string name="pinned">고정됨</string>
+    <string name="untitled_document">제목 없는 문서</string>
+    <string name="pin">고정</string>
+    <string name="delete">삭제</string>
+    <string name="char_count">%d자</string>
+    <string name="delete_document">문서 삭제</string>
+    <string name="delete_document_confirm">\"%s\"을(를) 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.</string>
+    <string name="just_now">방금</string>
+    <string name="minutes_ago">%d분 전</string>
+    <string name="hours_ago">%d시간 전</string>
+    <string name="days_ago">%d일 전</string>
+
+    <!-- Editor -->
+    <string name="enter_title_hint">제목을 입력하세요…</string>
+    <string name="back">뒤로</string>
+    <string name="edit">편집</string>
+    <string name="preview">미리보기</string>
+    <string name="copy_rich_text">서식 있는 텍스트 복사</string>
+    <string name="more">더 보기</string>
+    <string name="export_word">Word로 내보내기</string>
+    <string name="export_html">HTML로 내보내기</string>
+    <string name="export_pdf">PDF로 내보내기</string>
+    <string name="editor_placeholder">Markdown 편집 시작…\n\n지원 구문:\n# 제목\n**굵게** *기울임*\n- 목록\n> 인용\n`코드`\n| 표 |</string>
+    <string name="share_file">파일 공유</string>
+
+    <!-- Toolbar -->
+    <string name="toolbar_heading">제목</string>
+    <string name="toolbar_bold">굵게</string>
+    <string name="toolbar_italic">기울임</string>
+    <string name="toolbar_strikethrough">취소선</string>
+    <string name="toolbar_code">코드</string>
+    <string name="toolbar_quote">인용</string>
+    <string name="toolbar_unordered_list">글머리 기호 목록</string>
+    <string name="toolbar_ordered_list">번호 매기기 목록</string>
+    <string name="toolbar_table">표</string>
+    <string name="toolbar_table_template">\n| 열 1 | 열 2 | 열 3 |\n| --- | --- | --- |\n| 내용 | 내용 | 내용 |\n</string>
+    <string name="toolbar_horizontal_rule">구분선</string>
+    <string name="toolbar_link">링크</string>
+    <string name="toolbar_image">이미지</string>
+    <string name="toolbar_code_block">코드 블록</string>
+    <string name="toolbar_task_list">작업 목록</string>
+
+    <!-- Export results -->
+    <string name="copied_rich_text">서식 있는 텍스트가 클립보드에 복사됨</string>
+    <string name="export_html_success">HTML 내보내기 성공</string>
+    <string name="export_html_error">HTML 내보내기 실패: %s</string>
+    <string name="export_word_success">Word 내보내기 성공</string>
+    <string name="export_word_error">Word 내보내기 실패: %s</string>
+    <string name="export_pdf_started">PDF 내보내기 시작됨</string>
+    <string name="export_pdf_error">PDF 내보내기 실패</string>
+
+    <!-- Common -->
+    <string name="cancel">취소</string>
+    <string name="confirm">확인</string>
+    <string name="close">닫기</string>
+    <string name="copy">복사</string>
+</resources>

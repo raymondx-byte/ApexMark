@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">ApexMark</string>
+    <string name="app_subtitle">Markdown → リッチテキスト · ワンタップ変換</string>
+
+    <!-- Convert flow -->
+    <string name="convert_clipboard">クリップボードを変換</string>
+    <string name="convert_clipboard_content">クリップボードの内容を変換</string>
+    <string name="converted_success">✓ Word形式に変換しました</string>
+    <string name="converted_success_with_count">✓ Word形式に変換しました（%d文字）</string>
+    <string name="converted_chars">✓ %d文字を変換しました</string>
+    <string name="clipboard_empty">クリップボードが空です</string>
+    <string name="not_markdown">Markdownではないようです</string>
+    <string name="not_markdown_skipped">Markdownではないようです、スキップしました</string>
+    <string name="content_too_large">コンテンツが大きすぎます（%s MB）</string>
+    <string name="content_too_large_retry">コンテンツが大きすぎます（%s MB）、縮小して再試行してください</string>
+    <string name="convert_error">変換エラー: %s</string>
+    <string name="converting">変換中…</string>
+    <string name="convert_done">変換完了</string>
+    <string name="chars_to_richtext">%d文字 → リッチテキスト</string>
+
+    <!-- Floating bubble -->
+    <string name="bubble_running">ApexMark 実行中</string>
+    <string name="bubble_description">フローティングバブルをタップして Markdown → リッチテキストに変換</string>
+    <string name="bubble_stop">フローティングバブルを閉じる</string>
+    <string name="bubble_started">フローティングバブルを開始しました</string>
+    <string name="notification_channel_name">ApexMark フローティングコンバーター</string>
+    <string name="notification_channel_desc">フローティングバブルサービスを維持します</string>
+    <string name="notification_convert_action">今すぐ変換</string>
+
+    <!-- Overlay permission -->
+    <string name="overlay_permission_needed">「他のアプリの上に重ねて表示」の権限が必要です</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">ApexMark へようこそ</string>
+    <string name="onboarding_desc">いつでもワンタップでMarkdown変換を行うために、ApexMark は以下の権限が必要です：</string>
+    <string name="permission_overlay_title">オーバーレイ権限</string>
+    <string name="permission_overlay_desc">他のアプリの上に変換ボタンを表示し、コピー後にタップして変換します。</string>
+    <string name="permission_clipboard_title">クリップボードアクセス</string>
+    <string name="permission_clipboard_desc">コピーしたMarkdownテキストを読み取り、リッチテキストに変換します。追加の権限は不要です。</string>
+    <string name="privacy_notice">ApexMark はタップ時のみクリップボードを読み取ります。バックグラウンド監視やデータのアップロードはありません。すべての変換はローカルで行われます。</string>
+    <string name="get_started">はじめる</string>
+    <string name="permission_granted">有効</string>
+    <string name="go_enable">有効にする</string>
+
+    <!-- Main screen -->
+    <string name="theme">テーマ</string>
+    <string name="quick_tools">クイックツール</string>
+    <string name="start_bubble">フローティングバブルを開始</string>
+    <string name="start_bubble_desc">フローティングバブル + 通知バー変換ボタン、いつでもタップ</string>
+    <string name="usage_guide">使い方</string>
+    <string name="usage_step_1">上の「フローティングバブルを開始」をタップして有効にする</string>
+    <string name="usage_step_2">AIチャットツールからMarkdownテキストをコピー</string>
+    <string name="usage_step_3">フローティングバブルまたは通知バーの「変換」ボタンをタップ</string>
+    <string name="usage_step_4">WeChat、WPS、Feishu、DingTalk に貼り付け</string>
+
+    <!-- Theme -->
+    <string name="appearance_settings">外観</string>
+    <string name="choose_theme_desc">お好みのインターフェーススタイルを選択</string>
+    <string name="theme_system">システム</string>
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+
+    <!-- Document list -->
+    <string name="search_documents">ドキュメントを検索…</string>
+    <string name="markdown_editor">Markdown エディター</string>
+    <string name="search">検索</string>
+    <string name="new_document">新規ドキュメント</string>
+    <string name="no_documents">ドキュメントがありません</string>
+    <string name="create_first_document">右下のボタンをタップして最初のドキュメントを作成</string>
+    <string name="pinned">ピン留め</string>
+    <string name="untitled_document">無題のドキュメント</string>
+    <string name="pin">ピン留め</string>
+    <string name="delete">削除</string>
+    <string name="char_count">%d文字</string>
+    <string name="delete_document">ドキュメントを削除</string>
+    <string name="delete_document_confirm">\"%s\" を削除しますか？この操作は取り消せません。</string>
+    <string name="just_now">たった今</string>
+    <string name="minutes_ago">%d分前</string>
+    <string name="hours_ago">%d時間前</string>
+    <string name="days_ago">%d日前</string>
+
+    <!-- Editor -->
+    <string name="enter_title_hint">タイトルを入力…</string>
+    <string name="back">戻る</string>
+    <string name="edit">編集</string>
+    <string name="preview">プレビュー</string>
+    <string name="copy_rich_text">リッチテキストをコピー</string>
+    <string name="more">その他</string>
+    <string name="export_word">Wordとしてエクスポート</string>
+    <string name="export_html">HTMLとしてエクスポート</string>
+    <string name="export_pdf">PDFとしてエクスポート</string>
+    <string name="editor_placeholder">Markdownの編集を開始…\n\n対応構文:\n# 見出し\n**太字** *斜体*\n- リスト\n> 引用\n`コード`\n| テーブル |</string>
+    <string name="share_file">ファイルを共有</string>
+
+    <!-- Toolbar -->
+    <string name="toolbar_heading">見出し</string>
+    <string name="toolbar_bold">太字</string>
+    <string name="toolbar_italic">斜体</string>
+    <string name="toolbar_strikethrough">取り消し線</string>
+    <string name="toolbar_code">コード</string>
+    <string name="toolbar_quote">引用</string>
+    <string name="toolbar_unordered_list">箇条書きリスト</string>
+    <string name="toolbar_ordered_list">番号付きリスト</string>
+    <string name="toolbar_table">テーブル</string>
+    <string name="toolbar_table_template">\n| 列 1 | 列 2 | 列 3 |\n| --- | --- | --- |\n| 内容 | 内容 | 内容 |\n</string>
+    <string name="toolbar_horizontal_rule">区切り線</string>
+    <string name="toolbar_link">リンク</string>
+    <string name="toolbar_image">画像</string>
+    <string name="toolbar_code_block">コードブロック</string>
+    <string name="toolbar_task_list">タスクリスト</string>
+
+    <!-- Export results -->
+    <string name="copied_rich_text">リッチテキストをクリップボードにコピーしました</string>
+    <string name="export_html_success">HTMLエクスポート成功</string>
+    <string name="export_html_error">HTMLエクスポート失敗: %s</string>
+    <string name="export_word_success">Wordエクスポート成功</string>
+    <string name="export_word_error">Wordエクスポート失敗: %s</string>
+    <string name="export_pdf_started">PDFエクスポートを開始しました</string>
+    <string name="export_pdf_error">PDFエクスポートに失敗しました</string>
+
+    <!-- Common -->
+    <string name="cancel">キャンセル</string>
+    <string name="confirm">確認</string>
+    <string name="close">閉じる</string>
+    <string name="copy">コピー</string>
+</resources>

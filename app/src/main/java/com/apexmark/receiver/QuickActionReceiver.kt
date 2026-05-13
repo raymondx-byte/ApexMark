@@ -1,0 +1,41 @@
+package com.apexmark.receiver
+
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
+import com.apexmark.R
+import com.apexmark.engine.ConvertResult
+import com.apexmark.engine.MarkdownConverter
+import com.apexmark.engine.StyleStyler
+import com.apexmark.service.FloatingPortalService
+import com.apexmark.service.FloatingPortalServiceLocator
+
+class QuickActionReceiver : BroadcastReceiver() {
+
+    companion object {
+        const val ACTION_CONVERT_CLIPBOARD = "com.apexmark.ACTION_CONVERT_CLIPBOARD"
+        const val ACTION_TOGGLE_BUBBLE = "com.apexmark.ACTION_TOGGLE_BUBBLE"
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        when (intent.action) {
+            ACTION_CONVERT_CLIPBOARD -> {
+                val converter = FloatingPortalServiceLocator.instance?.converter
+                    ?: MarkdownConverter(StyleStyler())
+                val msg = when (val result = converter.convertClipboard(context)) {
+                    is ConvertResult.Success -> context.getString(R.string.converted_success_with_count, result.charCount)
+                    is ConvertResult.Empty -> context.getString(R.string.clipboard_empty)
+                    is ConvertResult.NotMarkdown -> context.getString(R.string.not_markdown)
+                    is ConvertResult.NotHtml -> context.getString(R.string.not_html)
+                    is ConvertResult.TooLarge -> context.getString(R.string.content_too_large, result.sizeMb)
+                    is ConvertResult.Error -> result.message
+                }
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+            }
+            ACTION_TOGGLE_BUBBLE -> {
+                FloatingPortalService.start(context)
+            }
+        }
+    }
+}

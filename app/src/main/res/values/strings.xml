@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">ApexMark</string>
+    <string name="app_subtitle">Markdown → Rich Text · One-tap Convert</string>
+
+    <!-- Convert flow -->
+    <string name="convert_clipboard">Convert Clipboard</string>
+    <string name="convert_clipboard_content">Markdown → Rich Text</string>
+    <string name="convert_clipboard_reverse">Rich Text → Markdown</string>
+    <string name="converted_success">✓ Converted to rich text</string>
+    <string name="converted_success_with_count">✓ Rich text ready (%d chars)</string>
+    <string name="converted_to_markdown_with_count">✓ Markdown ready (%d chars)</string>
+    <string name="converted_chars">✓ Converted %d chars</string>
+    <string name="clipboard_empty">Clipboard is empty</string>
+    <string name="not_markdown">Content doesn\'t look like Markdown</string>
+    <string name="not_markdown_skipped">Content doesn\'t look like Markdown, skipped</string>
+    <string name="not_html">Content doesn\'t contain rich text</string>
+    <string name="content_too_large">Content too large (%s MB)</string>
+    <string name="content_too_large_retry">Content too large (%s MB), please reduce and retry</string>
+    <string name="convert_error">Conversion error: %s</string>
+    <string name="converting">Converting…</string>
+    <string name="convert_done">Conversion Complete</string>
+    <string name="chars_to_richtext">%d chars → Rich Text</string>
+
+    <!-- Floating bubble -->
+    <string name="bubble_running">ApexMark Running</string>
+    <string name="bubble_description">Tap bubble to convert Markdown → Rich Text</string>
+    <string name="bubble_stop">Close Bubble</string>
+    <string name="bubble_show">Show Bubble</string>
+    <string name="bubble_hide">Hide Bubble</string>
+    <string name="bubble_started">Bubble started</string>
+    <string name="notification_channel_name">ApexMark Floating Converter</string>
+    <string name="notification_channel_desc">Keeps the floating bubble service running</string>
+    <string name="notification_convert_action">Convert Now</string>
+    <string name="notification_md_to_html">MD → Rich</string>
+    <string name="notification_html_to_md">Rich → MD</string>
+
+    <!-- Overlay permission -->
+    <string name="overlay_permission_needed">\"Display over other apps\" permission required</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Welcome to ApexMark</string>
+    <string name="onboarding_desc">To enable one-tap Markdown conversion anytime, ApexMark needs the following permissions:</string>
+    <string name="permission_overlay_title">Overlay Permission</string>
+    <string name="permission_overlay_desc">Show a convert button over other apps, tap to convert after copying.</string>
+    <string name="permission_clipboard_title">Clipboard Access</string>
+    <string name="permission_clipboard_desc">Read your copied Markdown text and convert to rich text. No extra permission needed.</string>
+    <string name="privacy_notice">ApexMark only reads the clipboard when you tap. No background monitoring or data upload. All conversion is done locally.</string>
+    <string name="get_started">Get Started</string>
+    <string name="permission_granted">Enabled</string>
+    <string name="go_enable">Enable</string>
+
+    <!-- Main screen -->
+    <string name="theme">Theme</string>
+    <string name="quick_tools">Quick Tools</string>
+    <string name="start_bubble">Start Floating Bubble</string>
+    <string name="stop_bubble">Stop Floating Bubble</string>
+    <string name="start_bubble_desc">Tap to convert · long-press to reverse (Rich → MD)</string>
+    <string name="stop_bubble_desc">Close the on-screen floating bubble</string>
+    <string name="usage_guide">How to Use</string>
+    <string name="usage_step_1">Tap \"Start Floating Bubble\" above, or use the notification bar buttons</string>
+    <string name="usage_step_2">Copy Markdown text from AI chat tools</string>
+    <string name="usage_step_3">Short-press bubble = MD → Rich · Long-press = Rich → MD</string>
+    <string name="usage_step_4">Paste into WeChat, WPS, Feishu, DingTalk, or any editor</string>
+
+    <!-- Theme -->
+    <string name="appearance_settings">Appearance</string>
+    <string name="choose_theme_desc">Choose your preferred interface style</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <!-- Document list -->
+    <string name="search_documents">Search documents…</string>
+    <string name="markdown_editor">Markdown Editor</string>
+    <string name="search">Search</string>
+    <string name="new_document">New Document</string>
+    <string name="no_documents">No documents yet</string>
+    <string name="create_first_document">Tap the button at bottom right to create your first document</string>
+    <string name="pinned">Pinned</string>
+    <string name="untitled_document">Untitled Document</string>
+    <string name="pin">Pin</string>
+    <string name="delete">Delete</string>
+    <string name="char_count">%d chars</string>
+    <string name="delete_document">Delete Document</string>
+    <string name="delete_document_confirm">Are you sure you want to delete \"%s\"? This cannot be undone.</string>
+    <string name="just_now">Just now</string>
+    <string name="minutes_ago">%d min ago</string>
+    <string name="hours_ago">%d hr ago</string>
+    <string name="days_ago">%d days ago</string>
+
+    <!-- Editor -->
+    <string name="enter_title_hint">Enter title…</string>
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
+    <string name="preview">Preview</string>
+    <string name="copy_rich_text">Copy Rich Text</string>
+    <string name="more">More</string>
+    <string name="export_word">Export as Word</string>
+    <string name="export_html">Export as HTML</string>
+    <string name="export_pdf">Export as PDF</string>
+    <string name="editor_placeholder">Start editing Markdown…\n\nSupported syntax:\n# Heading\n**Bold** *Italic*\n- List\n> Quote\n`Code`\n| Table |</string>
+    <string name="share_file">Share File</string>
+
+    <!-- Toolbar -->
+    <string name="toolbar_heading">Heading</string>
+    <string name="toolbar_bold">Bold</string>
+    <string name="toolbar_italic">Italic</string>
+    <string name="toolbar_strikethrough">Strikethrough</string>
+    <string name="toolbar_code">Code</string>
+    <string name="toolbar_quote">Quote</string>
+    <string name="toolbar_unordered_list">Bullet List</string>
+    <string name="toolbar_ordered_list">Numbered List</string>
+    <string name="toolbar_table">Table</string>
+    <string name="toolbar_table_template">\n| Col 1 | Col 2 | Col 3 |\n| --- | --- | --- |\n| Content | Content | Content |\n</string>
+    <string name="toolbar_horizontal_rule">Divider</string>
+    <string name="toolbar_link">Link</string>
+    <string name="toolbar_image">Image</string>
+    <string name="toolbar_code_block">Code Block</string>
+    <string name="toolbar_task_list">Task List</string>
+
+    <!-- Export results -->
+    <string name="copied_rich_text">Rich text copied to clipboard</string>
+    <string name="export_html_success">HTML export successful</string>
+    <string name="export_html_error">HTML export failed: %s</string>
+    <string name="export_word_success">Word export successful</string>
+    <string name="export_word_error">Word export failed: %s</string>
+    <string name="export_pdf_started">PDF export started</string>
+    <string name="export_pdf_error">PDF export failed</string>
+
+    <!-- Common -->
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="close">Close</string>
+    <string name="copy">Copy</string>
+
+    <!-- About -->
+    <string name="about">About</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_description">ApexMark is a featherweight, system-level Markdown ↔ Rich Text converter built for mobile productivity. Copy Markdown anywhere, tap once, paste fully-formatted rich text into WeChat, WPS, Feishu, DingTalk, email, or any editor — and long-press to convert in the opposite direction. Small footprint, zero background polling, zero network. All conversion happens locally on your device.</string>
+    <string name="about_repository">Source Repository</string>
+    <string name="about_repo_url" translatable="false">https://github.com/raymondx-byte/ApexMark</string>
+    <string name="about_contact">Contact / Commercial License</string>
+    <string name="about_email" translatable="false">raymondxiang.zm@gmail.com</string>
+    <string name="about_license">License</string>
+    <string name="about_license_value">AGPL-3.0 · Dual-licensed (commercial available)</string>
+    <string name="about_privacy">Privacy</string>
+    <string name="about_privacy_value">100% offline. No tracking, no analytics, no clipboard monitoring.</string>
+    <string name="about_author">Author</string>
+    <string name="about_author_value" translatable="false">Raymond X</string>
+    <string name="about_credits">Powered by Flexmark-java · Jetpack Compose · Material 3</string>
+</resources>

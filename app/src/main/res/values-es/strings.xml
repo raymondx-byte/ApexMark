@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">ApexMark</string>
+    <string name="app_subtitle">Markdown → texto enriquecido · Conversión con un toque</string>
+
+    <!-- Convert flow -->
+    <string name="convert_clipboard">Convertir portapapeles</string>
+    <string name="convert_clipboard_content">Convertir contenido del portapapeles</string>
+    <string name="converted_success">✓ Convertido a formato Word</string>
+    <string name="converted_success_with_count">✓ Convertido a formato Word (%d caracteres)</string>
+    <string name="converted_chars">✓ %d caracteres convertidos</string>
+    <string name="clipboard_empty">El portapapeles está vacío</string>
+    <string name="not_markdown">El contenido no parece ser Markdown</string>
+    <string name="not_markdown_skipped">El contenido no parece ser Markdown, omitido</string>
+    <string name="content_too_large">Contenido demasiado grande (%s MB)</string>
+    <string name="content_too_large_retry">Contenido demasiado grande (%s MB), por favor reduce e inténtalo de nuevo</string>
+    <string name="convert_error">Error de conversión: %s</string>
+    <string name="converting">Convirtiendo…</string>
+    <string name="convert_done">Conversión completada</string>
+    <string name="chars_to_richtext">%d caracteres → texto enriquecido</string>
+
+    <!-- Floating bubble -->
+    <string name="bubble_running">ApexMark en ejecución</string>
+    <string name="bubble_description">Toca la burbuja flotante para convertir Markdown → texto enriquecido</string>
+    <string name="bubble_stop">Cerrar burbuja flotante</string>
+    <string name="bubble_started">Burbuja flotante iniciada</string>
+    <string name="notification_channel_name">Convertidor flotante de ApexMark</string>
+    <string name="notification_channel_desc">Mantiene el servicio de burbuja flotante en ejecución</string>
+    <string name="notification_convert_action">Convertir ahora</string>
+
+    <!-- Overlay permission -->
+    <string name="overlay_permission_needed">Se requiere permiso \"Mostrar sobre otras apps\"</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Bienvenido a ApexMark</string>
+    <string name="onboarding_desc">Para habilitar la conversión de Markdown con un toque en cualquier momento, ApexMark necesita los siguientes permisos:</string>
+    <string name="permission_overlay_title">Permiso de superposición</string>
+    <string name="permission_overlay_desc">Muestra un botón de conversión sobre otras apps. Toca para convertir después de copiar.</string>
+    <string name="permission_clipboard_title">Acceso al portapapeles</string>
+    <string name="permission_clipboard_desc">Lee el texto Markdown copiado y lo convierte en texto enriquecido. No se necesita permiso adicional.</string>
+    <string name="privacy_notice">ApexMark solo lee el portapapeles cuando tocas. Sin monitoreo en segundo plano ni carga de datos. Toda la conversión se realiza localmente.</string>
+    <string name="get_started">Comenzar</string>
+    <string name="permission_granted">Habilitado</string>
+    <string name="go_enable">Habilitar</string>
+
+    <!-- Main screen -->
+    <string name="theme">Tema</string>
+    <string name="quick_tools">Herramientas rápidas</string>
+    <string name="start_bubble">Iniciar burbuja flotante</string>
+    <string name="start_bubble_desc">Burbuja flotante + botón de conversión en la barra de notificaciones, disponible en cualquier momento</string>
+    <string name="usage_guide">Cómo usar</string>
+    <string name="usage_step_1">Toca \"Iniciar burbuja flotante\" arriba para activar</string>
+    <string name="usage_step_2">Copia texto Markdown desde herramientas de chat con IA</string>
+    <string name="usage_step_3">Toca la burbuja o el botón \"Convertir\" de la barra de notificaciones</string>
+    <string name="usage_step_4">Pega en WeChat, WPS, Feishu, DingTalk</string>
+
+    <!-- Theme -->
+    <string name="appearance_settings">Apariencia</string>
+    <string name="choose_theme_desc">Elige tu estilo de interfaz preferido</string>
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+
+    <!-- Document list -->
+    <string name="search_documents">Buscar documentos…</string>
+    <string name="markdown_editor">Editor Markdown</string>
+    <string name="search">Buscar</string>
+    <string name="new_document">Nuevo documento</string>
+    <string name="no_documents">Aún no hay documentos</string>
+    <string name="create_first_document">Toca el botón inferior derecho para crear tu primer documento</string>
+    <string name="pinned">Fijado</string>
+    <string name="untitled_document">Documento sin título</string>
+    <string name="pin">Fijar</string>
+    <string name="delete">Eliminar</string>
+    <string name="char_count">%d caracteres</string>
+    <string name="delete_document">Eliminar documento</string>
+    <string name="delete_document_confirm">¿Estás seguro de que deseas eliminar \"%s\"? Esto no se puede deshacer.</string>
+    <string name="just_now">Ahora mismo</string>
+    <string name="minutes_ago">Hace %d min</string>
+    <string name="hours_ago">Hace %d h</string>
+    <string name="days_ago">Hace %d días</string>
+
+    <!-- Editor -->
+    <string name="enter_title_hint">Ingresa el título…</string>
+    <string name="back">Atrás</string>
+    <string name="edit">Editar</string>
+    <string name="preview">Vista previa</string>
+    <string name="copy_rich_text">Copiar texto enriquecido</string>
+    <string name="more">Más</string>
+    <string name="export_word">Exportar como Word</string>
+    <string name="export_html">Exportar como HTML</string>
+    <string name="export_pdf">Exportar como PDF</string>
+    <string name="editor_placeholder">Comienza a editar Markdown…\n\nSintaxis compatible:\n# Encabezado\n**Negrita** *Cursiva*\n- Lista\n> Cita\n`Código`\n| Tabla |</string>
+    <string name="share_file">Compartir archivo</string>
+
+    <!-- Toolbar -->
+    <string name="toolbar_heading">Encabezado</string>
+    <string name="toolbar_bold">Negrita</string>
+    <string name="toolbar_italic">Cursiva</string>
+    <string name="toolbar_strikethrough">Tachado</string>
+    <string name="toolbar_code">Código</string>
+    <string name="toolbar_quote">Cita</string>
+    <string name="toolbar_unordered_list">Lista con viñetas</string>
+    <string name="toolbar_ordered_list">Lista numerada</string>
+    <string name="toolbar_table">Tabla</string>
+    <string name="toolbar_table_template">\n| Col 1 | Col 2 | Col 3 |\n| --- | --- | --- |\n| Contenido | Contenido | Contenido |\n</string>
+    <string name="toolbar_horizontal_rule">Separador</string>
+    <string name="toolbar_link">Enlace</string>
+    <string name="toolbar_image">Imagen</string>
+    <string name="toolbar_code_block">Bloque de código</string>
+    <string name="toolbar_task_list">Lista de tareas</string>
+
+    <!-- Export results -->
+    <string name="copied_rich_text">Texto enriquecido copiado al portapapeles</string>
+    <string name="export_html_success">Exportación HTML exitosa</string>
+    <string name="export_html_error">Error al exportar HTML: %s</string>
+    <string name="export_word_success">Exportación Word exitosa</string>
+    <string name="export_word_error">Error al exportar Word: %s</string>
+    <string name="export_pdf_started">Exportación PDF iniciada</string>
+    <string name="export_pdf_error">Error al exportar PDF</string>
+
+    <!-- Common -->
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+    <string name="close">Cerrar</string>
+    <string name="copy">Copiar</string>
+</resources>

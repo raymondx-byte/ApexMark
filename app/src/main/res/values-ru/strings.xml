@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Приложение -->
+    <string name="app_name">ApexMark</string>
+    <string name="app_subtitle">Markdown → форматированный текст · Конвертация в одно касание</string>
+
+    <!-- Конвертация -->
+    <string name="convert_clipboard">Конвертировать буфер обмена</string>
+    <string name="convert_clipboard_content">Конвертировать содержимое буфера обмена</string>
+    <string name="converted_success">✓ Конвертировано в формат Word</string>
+    <string name="converted_success_with_count">✓ Конвертировано в формат Word (%d симв.)</string>
+    <string name="converted_chars">✓ Конвертировано %d симв.</string>
+    <string name="clipboard_empty">Буфер обмена пуст</string>
+    <string name="not_markdown">Содержимое не похоже на Markdown</string>
+    <string name="not_markdown_skipped">Содержимое не похоже на Markdown, пропущено</string>
+    <string name="content_too_large">Содержимое слишком большое (%s МБ)</string>
+    <string name="content_too_large_retry">Содержимое слишком большое (%s МБ), сократите и попробуйте снова</string>
+    <string name="convert_error">Ошибка конвертации: %s</string>
+    <string name="converting">Конвертация…</string>
+    <string name="convert_done">Конвертация завершена</string>
+    <string name="chars_to_richtext">%d симв. → форматированный текст</string>
+
+    <!-- Плавающая кнопка -->
+    <string name="bubble_running">ApexMark работает</string>
+    <string name="bubble_description">Нажмите на плавающую кнопку для конвертации Markdown → форматированный текст</string>
+    <string name="bubble_stop">Закрыть плавающую кнопку</string>
+    <string name="bubble_started">Плавающая кнопка запущена</string>
+    <string name="notification_channel_name">ApexMark Плавающий конвертер</string>
+    <string name="notification_channel_desc">Поддерживает работу плавающей кнопки</string>
+    <string name="notification_convert_action">Конвертировать</string>
+
+    <!-- Разрешение на наложение -->
+    <string name="overlay_permission_needed">Требуется разрешение «Поверх других приложений»</string>
+
+    <!-- Приветствие -->
+    <string name="onboarding_title">Добро пожаловать в ApexMark</string>
+    <string name="onboarding_desc">Чтобы конвертировать Markdown в одно касание в любое время, ApexMark необходимы следующие разрешения:</string>
+    <string name="permission_overlay_title">Разрешение на наложение</string>
+    <string name="permission_overlay_desc">Отображать кнопку конвертации поверх других приложений. Нажмите для конвертации после копирования.</string>
+    <string name="permission_clipboard_title">Доступ к буферу обмена</string>
+    <string name="permission_clipboard_desc">Считывает скопированный текст Markdown и конвертирует в форматированный текст. Дополнительных разрешений не требуется.</string>
+    <string name="privacy_notice">ApexMark читает буфер обмена только при нажатии. Без фонового отслеживания и загрузки данных. Вся конвертация выполняется локально.</string>
+    <string name="get_started">Начать</string>
+    <string name="permission_granted">Включено</string>
+    <string name="go_enable">Включить</string>
+
+    <!-- Главный экран -->
+    <string name="theme">Тема</string>
+    <string name="quick_tools">Быстрые инструменты</string>
+    <string name="start_bubble">Запустить плавающую кнопку</string>
+    <string name="start_bubble_desc">Плавающая кнопка + кнопка «Конвертировать» в панели уведомлений, доступна в любое время</string>
+    <string name="usage_guide">Как пользоваться</string>
+    <string name="usage_step_1">Нажмите «Запустить плавающую кнопку» выше для активации</string>
+    <string name="usage_step_2">Скопируйте текст Markdown из AI-чата</string>
+    <string name="usage_step_3">Нажмите на плавающую кнопку или кнопку «Конвертировать» в панели уведомлений</string>
+    <string name="usage_step_4">Вставьте в WeChat, WPS, Feishu, DingTalk</string>
+
+    <!-- Тема -->
+    <string name="appearance_settings">Оформление</string>
+    <string name="choose_theme_desc">Выберите предпочтительный стиль интерфейса</string>
+    <string name="theme_system">Системная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+
+    <!-- Список документов -->
+    <string name="search_documents">Поиск документов…</string>
+    <string name="markdown_editor">Редактор Markdown</string>
+    <string name="search">Поиск</string>
+    <string name="new_document">Новый документ</string>
+    <string name="no_documents">Документов пока нет</string>
+    <string name="create_first_document">Нажмите кнопку внизу справа, чтобы создать первый документ</string>
+    <string name="pinned">Закреплено</string>
+    <string name="untitled_document">Без названия</string>
+    <string name="pin">Закрепить</string>
+    <string name="delete">Удалить</string>
+    <string name="char_count">%d симв.</string>
+    <string name="delete_document">Удалить документ</string>
+    <string name="delete_document_confirm">Вы уверены, что хотите удалить «%s»? Это действие нельзя отменить.</string>
+    <string name="just_now">Только что</string>
+    <string name="minutes_ago">%d мин. назад</string>
+    <string name="hours_ago">%d ч. назад</string>
+    <string name="days_ago">%d дн. назад</string>
+
+    <!-- Редактор -->
+    <string name="enter_title_hint">Введите заголовок…</string>
+    <string name="back">Назад</string>
+    <string name="edit">Редактирование</string>
+    <string name="preview">Просмотр</string>
+    <string name="copy_rich_text">Копировать форматированный текст</string>
+    <string name="more">Ещё</string>
+    <string name="export_word">Экспорт в Word</string>
+    <string name="export_html">Экспорт в HTML</string>
+    <string name="export_pdf">Экспорт в PDF</string>
+    <string name="editor_placeholder">Начните редактировать Markdown…\n\nПоддерживаемый синтаксис:\n# Заголовок\n**Жирный** *Курсив*\n- Список\n> Цитата\n`Код`\n| Таблица |</string>
+    <string name="share_file">Поделиться файлом</string>
+
+    <!-- Панель инструментов -->
+    <string name="toolbar_heading">Заголовок</string>
+    <string name="toolbar_bold">Жирный</string>
+    <string name="toolbar_italic">Курсив</string>
+    <string name="toolbar_strikethrough">Зачёркнутый</string>
+    <string name="toolbar_code">Код</string>
+    <string name="toolbar_quote">Цитата</string>
+    <string name="toolbar_unordered_list">Маркированный список</string>
+    <string name="toolbar_ordered_list">Нумерованный список</string>
+    <string name="toolbar_table">Таблица</string>
+    <string name="toolbar_table_template">\n| Столбец 1 | Столбец 2 | Столбец 3 |\n| --- | --- | --- |\n| Содержимое | Содержимое | Содержимое |\n</string>
+    <string name="toolbar_horizontal_rule">Разделитель</string>
+    <string name="toolbar_link">Ссылка</string>
+    <string name="toolbar_image">Изображение</string>
+    <string name="toolbar_code_block">Блок кода</string>
+    <string name="toolbar_task_list">Список задач</string>
+
+    <!-- Результаты экспорта -->
+    <string name="copied_rich_text">Форматированный текст скопирован в буфер обмена</string>
+    <string name="export_html_success">Экспорт HTML выполнен</string>
+    <string name="export_html_error">Ошибка экспорта HTML: %s</string>
+    <string name="export_word_success">Экспорт Word выполнен</string>
+    <string name="export_word_error">Ошибка экспорта Word: %s</string>
+    <string name="export_pdf_started">Экспорт PDF начат</string>
+    <string name="export_pdf_error">Ошибка экспорта PDF</string>
+
+    <!-- Общие -->
+    <string name="cancel">Отмена</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="close">Закрыть</string>
+    <string name="copy">Копировать</string>
+</resources>

@@ -1,0 +1,29 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+/app/build
+.kotlin/
+
+# ── Signing keys (NEVER COMMIT) ──
+*.jks
+*.keystore
+keystore.properties
+key.properties
+release.keystore
+upload.keystore
+/app/release/
+/app/*.jks
+/app/*.keystore
+
+# ── Output artifacts ──
+/app/release/
+*.apk
+*.aab
+*.idsig

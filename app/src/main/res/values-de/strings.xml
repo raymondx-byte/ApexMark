@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">ApexMark</string>
+    <string name="app_subtitle">Markdown → Rich Text · Konvertierung mit einem Tipp</string>
+
+    <!-- Convert flow -->
+    <string name="convert_clipboard">Zwischenablage konvertieren</string>
+    <string name="convert_clipboard_content">Inhalt der Zwischenablage konvertieren</string>
+    <string name="converted_success">✓ In Word-Format konvertiert</string>
+    <string name="converted_success_with_count">✓ In Word-Format konvertiert (%d Zeichen)</string>
+    <string name="converted_chars">✓ %d Zeichen konvertiert</string>
+    <string name="clipboard_empty">Zwischenablage ist leer</string>
+    <string name="not_markdown">Inhalt sieht nicht nach Markdown aus</string>
+    <string name="not_markdown_skipped">Inhalt sieht nicht nach Markdown aus, übersprungen</string>
+    <string name="content_too_large">Inhalt zu groß (%s MB)</string>
+    <string name="content_too_large_retry">Inhalt zu groß (%s MB), bitte reduzieren und erneut versuchen</string>
+    <string name="convert_error">Konvertierungsfehler: %s</string>
+    <string name="converting">Konvertierung…</string>
+    <string name="convert_done">Konvertierung abgeschlossen</string>
+    <string name="chars_to_richtext">%d Zeichen → Rich Text</string>
+
+    <!-- Floating bubble -->
+    <string name="bubble_running">ApexMark läuft</string>
+    <string name="bubble_description">Tippe auf die Schwebende Blase, um Markdown → Rich Text zu konvertieren</string>
+    <string name="bubble_stop">Schwebende Blase schließen</string>
+    <string name="bubble_started">Schwebende Blase gestartet</string>
+    <string name="notification_channel_name">ApexMark Schwebender Konverter</string>
+    <string name="notification_channel_desc">Hält den Dienst der Schwebenden Blase aktiv</string>
+    <string name="notification_convert_action">Jetzt konvertieren</string>
+
+    <!-- Overlay permission -->
+    <string name="overlay_permission_needed">Berechtigung \"Über anderen Apps anzeigen\" erforderlich</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_title">Willkommen bei ApexMark</string>
+    <string name="onboarding_desc">Um die Markdown-Konvertierung mit einem Tipp jederzeit zu ermöglichen, benötigt ApexMark folgende Berechtigungen:</string>
+    <string name="permission_overlay_title">Overlay-Berechtigung</string>
+    <string name="permission_overlay_desc">Zeigt eine Konvertierungsschaltfläche über anderen Apps an. Nach dem Kopieren antippen zum Konvertieren.</string>
+    <string name="permission_clipboard_title">Zugriff auf die Zwischenablage</string>
+    <string name="permission_clipboard_desc">Liest kopierten Markdown-Text und konvertiert ihn in Rich Text. Keine zusätzliche Berechtigung erforderlich.</string>
+    <string name="privacy_notice">ApexMark liest die Zwischenablage nur beim Antippen. Keine Hintergrundüberwachung oder Datenübertragung. Alle Konvertierungen erfolgen lokal.</string>
+    <string name="get_started">Loslegen</string>
+    <string name="permission_granted">Aktiviert</string>
+    <string name="go_enable">Aktivieren</string>
+
+    <!-- Main screen -->
+    <string name="theme">Design</string>
+    <string name="quick_tools">Schnellwerkzeuge</string>
+    <string name="start_bubble">Schwebende Blase starten</string>
+    <string name="start_bubble_desc">Schwebende Blase + Konvertieren-Schaltfläche in der Benachrichtigungsleiste, jederzeit verfügbar</string>
+    <string name="usage_guide">Anleitung</string>
+    <string name="usage_step_1">Tippe oben auf \"Schwebende Blase starten\" zum Aktivieren</string>
+    <string name="usage_step_2">Markdown-Text aus KI-Chat-Tools kopieren</string>
+    <string name="usage_step_3">Tippe auf die Blase oder die \"Konvertieren\"-Schaltfläche in der Benachrichtigungsleiste</string>
+    <string name="usage_step_4">In WeChat, WPS, Feishu, DingTalk einfügen</string>
+
+    <!-- Theme -->
+    <string name="appearance_settings">Erscheinungsbild</string>
+    <string name="choose_theme_desc">Wähle deinen bevorzugten Oberflächenstil</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Hell</string>
+    <string name="theme_dark">Dunkel</string>
+
+    <!-- Document list -->
+    <string name="search_documents">Dokumente suchen…</string>
+    <string name="markdown_editor">Markdown-Editor</string>
+    <string name="search">Suche</string>
+    <string name="new_document">Neues Dokument</string>
+    <string name="no_documents">Noch keine Dokumente</string>
+    <string name="create_first_document">Tippe auf die Schaltfläche unten rechts, um dein erstes Dokument zu erstellen</string>
+    <string name="pinned">Angeheftet</string>
+    <string name="untitled_document">Unbenanntes Dokument</string>
+    <string name="pin">Anheften</string>
+    <string name="delete">Löschen</string>
+    <string name="char_count">%d Zeichen</string>
+    <string name="delete_document">Dokument löschen</string>
+    <string name="delete_document_confirm">Möchtest du \"%s\" wirklich löschen? Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="just_now">Gerade eben</string>
+    <string name="minutes_ago">Vor %d Min.</string>
+    <string name="hours_ago">Vor %d Std.</string>
+    <string name="days_ago">Vor %d Tagen</string>
+
+    <!-- Editor -->
+    <string name="enter_title_hint">Titel eingeben…</string>
+    <string name="back">Zurück</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="preview">Vorschau</string>
+    <string name="copy_rich_text">Rich Text kopieren</string>
+    <string name="more">Mehr</string>
+    <string name="export_word">Als Word exportieren</string>
+    <string name="export_html">Als HTML exportieren</string>
+    <string name="export_pdf">Als PDF exportieren</string>
+    <string name="editor_placeholder">Markdown bearbeiten…\n\nUnterstützte Syntax:\n# Überschrift\n**Fett** *Kursiv*\n- Liste\n> Zitat\n`Code`\n| Tabelle |</string>
+    <string name="share_file">Datei teilen</string>
+
+    <!-- Toolbar -->
+    <string name="toolbar_heading">Überschrift</string>
+    <string name="toolbar_bold">Fett</string>
+    <string name="toolbar_italic">Kursiv</string>
+    <string name="toolbar_strikethrough">Durchgestrichen</string>
+    <string name="toolbar_code">Code</string>
+    <string name="toolbar_quote">Zitat</string>
+    <string name="toolbar_unordered_list">Aufzählungsliste</string>
+    <string name="toolbar_ordered_list">Nummerierte Liste</string>
+    <string name="toolbar_table">Tabelle</string>
+    <string name="toolbar_table_template">\n| Spalte 1 | Spalte 2 | Spalte 3 |\n| --- | --- | --- |\n| Inhalt | Inhalt | Inhalt |\n</string>
+    <string name="toolbar_horizontal_rule">Trennlinie</string>
+    <string name="toolbar_link">Link</string>
+    <string name="toolbar_image">Bild</string>
+    <string name="toolbar_code_block">Codeblock</string>
+    <string name="toolbar_task_list">Aufgabenliste</string>
+
+    <!-- Export results -->
+    <string name="copied_rich_text">Rich Text in die Zwischenablage kopiert</string>
+    <string name="export_html_success">HTML-Export erfolgreich</string>
+    <string name="export_html_error">HTML-Export fehlgeschlagen: %s</string>
+    <string name="export_word_success">Word-Export erfolgreich</string>
+    <string name="export_word_error">Word-Export fehlgeschlagen: %s</string>
+    <string name="export_pdf_started">PDF-Export gestartet</string>
+    <string name="export_pdf_error">PDF-Export fehlgeschlagen</string>
+
+    <!-- Common -->
+    <string name="cancel">Abbrechen</string>
+    <string name="confirm">Bestätigen</string>
+    <string name="close">Schließen</string>
+    <string name="copy">Kopieren</string>
+</resources>

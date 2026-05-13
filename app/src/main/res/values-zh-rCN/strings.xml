@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">ApexMark</string>
+    <string name="app_subtitle">Markdown → 富文本 · 一键转换</string>
+
+    <!-- 转换流 -->
+    <string name="convert_clipboard">转换剪贴板</string>
+    <string name="convert_clipboard_content">Markdown → 富文本</string>
+    <string name="convert_clipboard_reverse">富文本 → Markdown</string>
+    <string name="converted_success">✓ 已转为富文本</string>
+    <string name="converted_success_with_count">✓ 富文本就绪 (%d 字)</string>
+    <string name="converted_to_markdown_with_count">✓ Markdown 就绪 (%d 字)</string>
+    <string name="converted_chars">✓ 已转换 %d 字</string>
+    <string name="clipboard_empty">剪贴板为空</string>
+    <string name="not_markdown">内容不像 Markdown</string>
+    <string name="not_markdown_skipped">内容不像 Markdown，已跳过</string>
+    <string name="not_html">内容不是富文本/HTML</string>
+    <string name="content_too_large">内容过大 (%sMB)</string>
+    <string name="content_too_large_retry">内容过大 (%sMB)，请缩减后重试</string>
+    <string name="convert_error">转换异常: %s</string>
+    <string name="converting">转换中…</string>
+    <string name="convert_done">转换完成</string>
+    <string name="chars_to_richtext">%d 字 → 富文本</string>
+
+    <!-- 悬浮球 -->
+    <string name="bubble_running">ApexMark 运行中</string>
+    <string name="bubble_description">点击悬浮球转换 Markdown → 富文本</string>
+    <string name="bubble_stop">关闭悬浮球</string>
+    <string name="bubble_show">显示悬浮球</string>
+    <string name="bubble_hide">隐藏悬浮球</string>
+    <string name="bubble_started">悬浮球已启动</string>
+    <string name="notification_channel_name">ApexMark 悬浮转换</string>
+    <string name="notification_channel_desc">保持悬浮球转换服务运行</string>
+    <string name="notification_convert_action">一键转换</string>
+    <string name="notification_md_to_html">MD → 富文本</string>
+    <string name="notification_html_to_md">富文本 → MD</string>
+
+    <!-- 悬浮窗权限 -->
+    <string name="overlay_permission_needed">需要「显示在其他应用上」权限</string>
+
+    <!-- 首次引导 -->
+    <string name="onboarding_title">欢迎使用 ApexMark</string>
+    <string name="onboarding_desc">为了让你随时一键转换 Markdown，ApexMark 需要以下权限：</string>
+    <string name="permission_overlay_title">悬浮窗权限</string>
+    <string name="permission_overlay_desc">在其他应用上方显示转换按钮，复制后一点即转。</string>
+    <string name="permission_clipboard_title">剪贴板读取</string>
+    <string name="permission_clipboard_desc">读取你复制的 Markdown 文本并转换为富文本。无需额外授权。</string>
+    <string name="privacy_notice">ApexMark 仅在你主动点击时读取剪贴板，不会后台监控或上传任何数据。所有转换均在本地完成。</string>
+    <string name="get_started">开始使用</string>
+    <string name="permission_granted">已开启</string>
+    <string name="go_enable">去开启</string>
+
+    <!-- 主界面 -->
+    <string name="theme">主题</string>
+    <string name="quick_tools">快捷工具</string>
+    <string name="start_bubble">启动悬浮球</string>
+    <string name="stop_bubble">关闭悬浮球</string>
+    <string name="start_bubble_desc">短按 MD → 富文本，长按 富文本 → MD</string>
+    <string name="stop_bubble_desc">关闭屏幕上的悬浮球</string>
+    <string name="usage_guide">使用方法</string>
+    <string name="usage_step_1">点击上方「启动悬浮球」或使用通知栏按钮</string>
+    <string name="usage_step_2">从 AI 聊天工具复制 Markdown 或富文本</string>
+    <string name="usage_step_3">悬浮球短按 = MD → 富文本，长按 = 富文本 → MD</string>
+    <string name="usage_step_4">粘贴到微信、WPS、飞书、钉钉或任何编辑器</string>
+
+    <!-- 主题 -->
+    <string name="appearance_settings">外观设置</string>
+    <string name="choose_theme_desc">选择你喜欢的界面风格</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+
+    <!-- 文档列表 -->
+    <string name="search_documents">搜索文档…</string>
+    <string name="markdown_editor">Markdown 编辑器</string>
+    <string name="search">搜索</string>
+    <string name="new_document">新建文档</string>
+    <string name="no_documents">还没有文档</string>
+    <string name="create_first_document">点击右下角按钮创建第一个文档</string>
+    <string name="pinned">已置顶</string>
+    <string name="untitled_document">未命名文档</string>
+    <string name="pin">置顶</string>
+    <string name="delete">删除</string>
+    <string name="char_count">%d 字</string>
+    <string name="delete_document">删除文档</string>
+    <string name="delete_document_confirm">确定要删除「%s」吗？此操作不可撤销。</string>
+    <string name="just_now">刚刚</string>
+    <string name="minutes_ago">%d 分钟前</string>
+    <string name="hours_ago">%d 小时前</string>
+    <string name="days_ago">%d 天前</string>
+
+    <!-- 编辑器 -->
+    <string name="enter_title_hint">输入标题…</string>
+    <string name="back">返回</string>
+    <string name="edit">编辑</string>
+    <string name="preview">预览</string>
+    <string name="copy_rich_text">复制富文本</string>
+    <string name="more">更多</string>
+    <string name="export_word">导出为 Word</string>
+    <string name="export_html">导出为 HTML</string>
+    <string name="export_pdf">导出为 PDF</string>
+    <string name="editor_placeholder">开始编辑 Markdown…\n\n支持的语法：\n# 标题\n**加粗** *斜体*\n- 列表\n> 引用\n`代码`\n| 表格 |</string>
+    <string name="share_file">分享文件</string>
+
+    <!-- 工具栏 -->
+    <string name="toolbar_heading">标题</string>
+    <string name="toolbar_bold">加粗</string>
+    <string name="toolbar_italic">斜体</string>
+    <string name="toolbar_strikethrough">删除线</string>
+    <string name="toolbar_code">代码</string>
+    <string name="toolbar_quote">引用</string>
+    <string name="toolbar_unordered_list">无序列表</string>
+    <string name="toolbar_ordered_list">有序列表</string>
+    <string name="toolbar_table">表格</string>
+    <string name="toolbar_table_template">\n| 列1 | 列2 | 列3 |\n| --- | --- | --- |\n| 内容 | 内容 | 内容 |\n</string>
+    <string name="toolbar_horizontal_rule">分割线</string>
+    <string name="toolbar_link">链接</string>
+    <string name="toolbar_image">图片</string>
+    <string name="toolbar_code_block">代码块</string>
+    <string name="toolbar_task_list">任务列表</string>
+
+    <!-- 导出结果 -->
+    <string name="copied_rich_text">已复制富文本到剪贴板</string>
+    <string name="export_html_success">HTML 导出成功</string>
+    <string name="export_html_error">HTML 导出失败: %s</string>
+    <string name="export_word_success">Word 导出成功</string>
+    <string name="export_word_error">Word 导出失败: %s</string>
+    <string name="export_pdf_started">PDF 导出已启动</string>
+    <string name="export_pdf_error">PDF 导出失败</string>
+
+    <!-- 通用 -->
+    <string name="cancel">取消</string>
+    <string name="confirm">确认</string>
+    <string name="close">关闭</string>
+    <string name="copy">复制</string>
+
+    <!-- 关于 -->
+    <string name="about">关于</string>
+    <string name="about_version">版本 %1$s</string>
+    <string name="about_description">ApexMark 是一款极轻量、低资源占用的系统级 Markdown ↔ 富文本双向转换工具，专为移动办公而生。从任意 App 复制 Markdown 一点即转，粘贴到微信、WPS、飞书、钉钉、邮件即为格式完整的富文本；长按则反向把富文本转回 Markdown。小体积、零后台轮询、零网络请求，所有转换均在本地完成。</string>
+    <string name="about_repository">源码仓库</string>
+    <string name="about_contact">联系作者 / 商业授权</string>
+    <string name="about_license">开源协议</string>
+    <string name="about_license_value">AGPL-3.0 · 双重许可（提供商业授权）</string>
+    <string name="about_privacy">隐私</string>
+    <string name="about_privacy_value">100% 离线运行 · 无跟踪 · 无数据上传 · 不后台监听剪贴板</string>
+    <string name="about_author">作者</string>
+    <string name="about_credits">基于 Flexmark-java · Jetpack Compose · Material 3 构建</string>
+</resources>
