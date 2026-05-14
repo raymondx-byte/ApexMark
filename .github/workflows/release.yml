@@ -45,26 +45,45 @@ jobs:
           chmod +x gradlew
           ./gradlew :app:assembleRelease --no-daemon --stacktrace
 
-      - name: SHA-256 of APK
-        id: shasum
+      - name: Rename APK and checksum
+        id: asset
         run: |
-          APK=$(ls app/build/outputs/apk/release/*.apk | head -n1)
-          echo "apk=$APK" >> "$GITHUB_OUTPUT"
-          sha256sum "$APK" | tee SHA256SUMS.txt
+          set -euo pipefail
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          SRC="$(ls app/build/outputs/apk/release/*.apk | head -n1)"
+          DEST="ApexMark.${VERSION}.apk"
+          cp "$SRC" "$DEST"
+          sha256sum "$DEST" | tee SHA256SUMS.txt
+          echo "apk=$DEST" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Release notes
         run: |
-          echo "## SHA-256 (release APK)" > release_notes.md
-          echo '```' >> release_notes.md
-          cat SHA256SUMS.txt >> release_notes.md
-          echo '```' >> release_notes.md
-          echo "" >> release_notes.md
-          echo "Built from tag \`${{ github.ref_name }}\` commit [\`${{ github.sha }}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})." >> release_notes.md
+          set -euo pipefail
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#v}"
+          APK="${{ steps.asset.outputs.apk }}"
+          {
+            echo "## ApexMark ${VERSION}"
+            echo ""
+            echo "Android **Markdown / 剪贴板** 轻量工具；本包为 **release** 签名构建。"
+            echo ""
+            echo "- **安装包**: \`${APK}\`（下载列表中的文件名即此）"
+            echo "- **提交**: [\`${{ github.sha }}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})（标签 \`${TAG}\`）"
+            echo ""
+            echo "### SHA-256"
+            echo '```'
+            cat SHA256SUMS.txt
+            echo '```'
+            echo ""
+            echo "> 校验：\`sha256sum -c SHA256SUMS.txt\`（需与 APK 同目录）"
+          } > release_notes.md
 
       - uses: softprops/action-gh-release@v2
         with:
+          name: "ApexMark ${{ github.ref_name }}"
           files: |
-            app/build/outputs/apk/release/*.apk
+            ${{ steps.asset.outputs.apk }}
             SHA256SUMS.txt
           body_path: release_notes.md
-          generate_release_notes: true
