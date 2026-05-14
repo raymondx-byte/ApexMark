@@ -165,7 +165,7 @@ adb shell dumpsys batterystats --charged "$PKG" | head -n 80
 
 ### GitHub Release（打 tag 自动发版）
 
-推送 **`v*`** 标签会触发 [`.github/workflows/release.yml`](.github/workflows/release.yml)：在 Runner 上解码 keystore、写入 `keystore.properties`、执行 `:app:assembleRelease`，并把 APK 与 **SHA-256** 清单挂到 GitHub Release。
+推送 **`v*`** 标签会触发 [`.github/workflows/release.yml`](.github/workflows/release.yml)：在 Runner 上解码 keystore、写入 `keystore.properties`、执行 **`:app:brandReleaseApk`**（生成 `ApexMark.<versionName>.apk` 与 `SHA256SUMS.txt`），并挂到 GitHub Release。
 
 在仓库 **Settings → Secrets and variables → Actions** 中配置：
 
@@ -223,7 +223,8 @@ git clone https://github.com/raymondx-byte/ApexMark.git
 cd ApexMark
 ./gradlew assembleDebug         # debug APK
 ./gradlew test                  # 单元测试（`:app` + `:apex-link-core`）
-./gradlew assembleRelease       # 已签名 release APK（需 keystore.properties 或 CI Secrets，见上「GitHub Release」）
+./gradlew :app:brandReleaseApk  # 已签名 release；产物 `app/build/outputs/apk/release/ApexMark.<versionName>.apk`
+./gradlew assembleRelease       # 仅打包；发版/与 tag 一致的文件名请用上一行
 ```
 
 ### 安装
@@ -440,7 +441,8 @@ git clone https://github.com/raymondx-byte/ApexMark.git
 cd ApexMark
 ./gradlew assembleDebug      # debug APK
 ./gradlew test               # unit tests (:app + :apex-link-core)
-./gradlew assembleRelease    # signed release APK (keystore.properties or CI secrets; see CHANGELOG / workflow docs)
+./gradlew :app:brandReleaseApk  # signed release → `ApexMark.<versionName>.apk` under outputs/apk/release
+./gradlew assembleRelease       # package only; use brandReleaseApk for distribution filename
 ```
 
 ### Install
