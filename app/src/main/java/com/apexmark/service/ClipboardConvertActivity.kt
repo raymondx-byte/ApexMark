@@ -8,8 +8,6 @@ import com.apexmark.engine.ConvertActions
 import com.apexmark.engine.ConvertResult
 import com.apexmark.engine.ConvertUiFeedback
 import com.apexmark.engine.MarkdownConverter
-import com.apexmark.engine.StyleStyler
-
 /**
  * 透明、无 UI 的活动。Android 10+ 要求剪贴板访问必须由前台拥有窗口焦点的 Activity 发起。
  * 通过 [ConvertActions.EXTRA]（或旧版 [EXTRA_DIRECTION]）选择六种显式转换。
@@ -50,7 +48,7 @@ class ClipboardConvertActivity : Activity() {
             launchIntent?.getStringExtra(EXTRA_DIRECTION)
         )
         val converter = FloatingPortalServiceLocator.instance?.converter
-            ?: MarkdownConverter(StyleStyler())
+            ?: MarkdownConverter()
         val result: ConvertResult = try {
             converter.convertForAction(this, action)
         } catch (e: Exception) {

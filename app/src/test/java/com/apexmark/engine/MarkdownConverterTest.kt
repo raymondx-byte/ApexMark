@@ -5,18 +5,16 @@ import org.junit.Before
 import org.junit.Test
 
 /**
- * MarkdownConverter + StyleStyler 单元测试。
+ * MarkdownConverter（内嵌 [com.apexmark.link.core.ApexLinkMarkdownCore]）单元测试。
  * 重点验证：表格框线保留、内联样式注入、微信/WPS 兼容性。
  */
 class MarkdownConverterTest {
 
     private lateinit var converter: MarkdownConverter
-    private lateinit var styler: StyleStyler
 
     @Before
     fun setup() {
-        styler = StyleStyler()
-        converter = MarkdownConverter(styler)
+        converter = MarkdownConverter()
     }
 
     // ═══════════════════════════════════════════

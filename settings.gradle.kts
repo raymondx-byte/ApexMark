@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ApexMark"
 include(":app")
+include(":apex-link-core")

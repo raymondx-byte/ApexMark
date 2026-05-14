@@ -24,8 +24,8 @@ android {
         applicationId = "com.apexmark"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -85,6 +85,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":apex-link-core"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -94,11 +96,6 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons)
-
-    implementation(libs.flexmark.core)
-    implementation(libs.flexmark.ext.tables)
-    implementation(libs.flexmark.ext.strikethrough)
-    implementation(libs.flexmark.html2md)
 
     implementation(libs.kotlinx.coroutines.android)
 

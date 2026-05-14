@@ -24,7 +24,7 @@ object ConvertActions {
         CLIPBOARD_TO_HTML_EMAIL
     )
 
-    /** 写入 WPS 取向剪贴板（含第二 URI 项）的动作，成功后可附带回读诊断。 */
+    /** 写入 WPS 取向剪贴板（首项 URI + 第二项富文本）的动作，成功后可附带回读诊断。 */
     fun writesWpsStyleClipboard(action: String): Boolean =
         action == MD_TO_WPS || action == HTML_TO_WPS
 

@@ -49,7 +49,6 @@ import com.apexmark.engine.ConvertActions
 import com.apexmark.engine.ConvertResult
 import com.apexmark.engine.ConvertUiFeedback
 import com.apexmark.engine.MarkdownConverter
-import com.apexmark.engine.StyleStyler
 import com.apexmark.service.FloatingPortalService
 import com.apexmark.service.FloatingPortalServiceLocator
 import com.apexmark.ui.theme.*
@@ -58,7 +57,7 @@ class MainActivity : ComponentActivity() {
 
     /** 优先复用 Service 中的 converter；冷启动 Service 尚未到位时本地懒构造一次。 */
     private val converter: MarkdownConverter by lazy {
-        FloatingPortalServiceLocator.instance?.converter ?: MarkdownConverter(StyleStyler())
+        FloatingPortalServiceLocator.instance?.converter ?: MarkdownConverter()
     }
 
     private val overlayPermissionLauncher = registerForActivityResult(

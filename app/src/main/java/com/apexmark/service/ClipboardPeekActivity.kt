@@ -7,8 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import com.apexmark.engine.ClipboardClipKind
 import com.apexmark.engine.MarkdownConverter
-import com.apexmark.engine.StyleStyler
-
 /**
  * 透明 Activity：在取得窗口焦点后读取剪贴板并分类（Android 10+ 要求）。
  * 仅用于悬浮球：判型后再弹出与通知栏一致的转换菜单。
@@ -39,7 +37,7 @@ class ClipboardPeekActivity : Activity() {
             handled = true
             MarkdownConverter.discardPendingPeekAfterClipboardChanged()
             val converter = FloatingPortalServiceLocator.instance?.converter
-                ?: MarkdownConverter(StyleStyler())
+                ?: MarkdownConverter()
             val kind = try {
                 converter.peekClipboardKind(this)
             } catch (_: Throwable) {

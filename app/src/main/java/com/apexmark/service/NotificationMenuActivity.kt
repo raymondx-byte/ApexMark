@@ -17,7 +17,6 @@ import com.apexmark.engine.ClipboardClipKind
 import com.apexmark.engine.ConvertActions
 import com.apexmark.engine.ConvertUiFeedback
 import com.apexmark.engine.MarkdownConverter
-import com.apexmark.engine.StyleStyler
 import com.apexmark.ui.ConvertMenuUi
 
 /**
@@ -39,7 +38,7 @@ class NotificationMenuActivity : Activity() {
             handled = true
             MarkdownConverter.discardPendingPeekAfterClipboardChanged()
             val converter = FloatingPortalServiceLocator.instance?.converter
-                ?: MarkdownConverter(StyleStyler())
+                ?: MarkdownConverter()
             val kind = try {
                 converter.peekClipboardKind(this)
             } catch (_: Throwable) {
@@ -99,7 +98,7 @@ class NotificationMenuActivity : Activity() {
     @SuppressLint("SetTextI18n")
     private fun showConvertMenu(kind: ClipboardClipKind) {
         val converter = FloatingPortalServiceLocator.instance?.converter
-            ?: MarkdownConverter(StyleStyler())
+            ?: MarkdownConverter()
         val (primary, secondary) = ConvertActions.primarySecondaryForKind(kind)
         val plainTidy = kind == ClipboardClipKind.PLAIN
 

@@ -1,10 +1,10 @@
-package com.apexmark.engine
+package com.apexmark.link.core
 
 /**
  * 内联 CSS 样式注入器。
  *
  * 核心策略：把所有样式直接写进 style="" 属性，
- * 因为微信、WPS、钉钉等第三方 App 不会加载 <style> 块。
+ * 因为微信、WPS、钉钉等第三方 App 不会加载 `<style>` 块。
  *
  * 表格强制加 border="1" cellpadding="5" 确保移动端 Word 可见框线；默认无彩色表头填充（透明底 + 深色线框）。
  */
@@ -29,7 +29,6 @@ class StyleStyler {
         html = html.replace("<blockquote>",
             """<blockquote style="$BLOCKQUOTE_STYLE">""")
 
-        // pre>code 必须先处理，否则内层 <code> 会被下面的行内规则吃掉
         html = html.replace(Regex("""<pre[^>]*>\s*<code[^>]*>"""),
             """<pre style="$PRE_STYLE"><code style="$PRE_CODE_STYLE">""")
         html = html.replace(Regex("""<pre>(?!\s*<code)"""),
@@ -42,14 +41,11 @@ class StyleStyler {
         html = html.replace("<ol>", """<ol style="$OL_STYLE">""")
         html = html.replace("<li>", """<li style="$LI_STYLE">""")
 
-        // 先修 `<table><th` 再扩写 table 标签，否则 `[^>]*` 过长时与「在 table 后插 thead/tr」逻辑难配合
         html = repairLooseTableCells(html)
-        // 微信 / WPS / 钉钉的富文本输入框不解析 CSS border 等属性，必须用 HTML 原生属性
         html = html.replace(Regex("""<table[^>]*>"""),
             """<table border="1" cellpadding="5" cellspacing="0" style="$TABLE_STYLE">""")
         html = html.replace(Regex("""<thead[^>]*>"""), "<thead>")
         html = html.replace(Regex("""<tbody[^>]*>"""), "<tbody>")
-        // 须用 `<th\\b`，否则 `<thead>` 会被当成 `<th…>` 整块替换，表头行会碎成「table 下直接 th」
         html = html.replace(Regex("""<tr\b[^>]*>"""), """<tr style="$TR_STYLE">""")
         html = html.replace(Regex("""<th\b[^>]*>"""), """<th style="$TH_STYLE">""")
         html = html.replace(Regex("""<td\b[^>]*>"""), """<td style="$TD_STYLE">""")
@@ -66,10 +62,6 @@ class StyleStyler {
         return html
     }
 
-    /**
-     * html→md→html 等路径可能产生 `<table><th` 或 `<thead><th` 缺少 `<tr>`，WPS 会拒粘并卡住。
-     * 用索引插入，避免 `String.replace(Regex)` 与 `$1$2` 转义问题。
-     */
     private fun repairLooseTableCells(html: String): String {
         var s = html
         val tableOpen = Regex("""<table[^>]*>""", RegexOption.IGNORE_CASE)
@@ -81,7 +73,6 @@ class StyleStyler {
             val tail = s.substring(afterGt)
             val wsLen = tail.takeWhile { it.isWhitespace() }.length
             val slice = tail.drop(wsLen)
-            // 不能用 startsWith("<th")：会与 `<thead>` 误判混淆
             if (!Regex("""^<th\b""", RegexOption.IGNORE_CASE).containsMatchIn(slice)) {
                 searchFrom = afterGt
                 continue
@@ -103,7 +94,6 @@ class StyleStyler {
         return s
     }
 
-    /** 纯文本包一层带样式的段落，供「剪贴板 → HTML」等路径使用。 */
     fun styledPlainParagraph(plain: String): String {
         val esc = escapeXmlText(plain)
         return """<p style="$P_STYLE">$esc</p>"""
@@ -124,7 +114,6 @@ class StyleStyler {
     companion object {
         private const val FONT_STACK = "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans SC','Microsoft YaHei',sans-serif;"
 
-        // 色值统一对齐图标色谱: #0050B0(Apex600) → #1566C8(Apex500) → #3380E0(Apex400)
         const val H1_STYLE = "${FONT_STACK}font-size:22px;font-weight:700;color:#1566c8;margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid #cce0ff;line-height:1.4;"
         const val H2_STYLE = "${FONT_STACK}font-size:19px;font-weight:600;color:#0050b0;margin:18px 0 8px;line-height:1.4;"
         const val H3_STYLE = "${FONT_STACK}font-size:16px;font-weight:600;color:#003e90;margin:14px 0 6px;line-height:1.4;"

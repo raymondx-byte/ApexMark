@@ -13,13 +13,8 @@ import androidx.core.content.FileProvider
 import androidx.core.text.HtmlCompat
 import com.apexmark.AppForegroundTracker
 import com.apexmark.R
+import com.apexmark.link.core.ApexLinkMarkdownCore
 import com.apexmark.service.FloatingPortalServiceLocator
-import com.vladsch.flexmark.ext.gfm.strikethrough.StrikethroughExtension
-import com.vladsch.flexmark.ext.tables.TablesExtension
-import com.vladsch.flexmark.html.HtmlRenderer
-import com.vladsch.flexmark.html2md.converter.FlexmarkHtmlConverter
-import com.vladsch.flexmark.parser.Parser
-import com.vladsch.flexmark.util.data.MutableDataSet
 import java.io.File
 import java.io.FileInputStream
 
@@ -36,46 +31,22 @@ private val WPS_CLIPBOARD_GRANT_PACKAGES = listOf(
 /**
  * Apex-Link 核心转换引擎。
  * 剪贴板富文本：
- * - **浏览器向 HTML**：[writeHtmlEmailClipboard] — `ClipDescription` **仅 `text/html`** + 单 `Item(plain, html)`（贴近浏览器复制）。
- * - **WPS**：[writeWpsStyleClipboard] — **首项** `content://` 临时 HTML（FileProvider + grant），**第二项** `Item(plain, html)`；
- *   实测 WPS 在仅有 `htmlText` 时仍常只粘纯文本，故与 WPS 取向分策略。
+ * - **浏览器 / 微信等**：[writeHtmlEmailClipboard] — `ClipDescription` **仅 `text/html`** + 单 `Item(plain, html)`（无 URI，避免微信把 .html 当附件）。
+ * - **WPS**：[writeWpsStyleClipboard] — **首项** `content://` 临时 HTML（FileProvider + grant），**第二项** `Item(plain, html)`；手机 WPS 依赖此形态才保留版式。
+ *
+ * Android 剪贴板与判型在本类；纯 Markdown / HTML 串管线在 [ApexLinkMarkdownCore]（JVM 库 `:apex-link-core`）。
  *
  * 兜底保护：
  * - 超过 MAX_SIZE_BYTES (1MB) 的文本拒绝同步处理，返回 TooLarge。
  * - 所有 public 方法线程安全，可在后台线程调用。
  */
 class MarkdownConverter(
-    private val styler: StyleStyler
+    private val core: ApexLinkMarkdownCore = ApexLinkMarkdownCore()
 ) {
 
-    private val options = MutableDataSet().apply {
-        set(Parser.EXTENSIONS, listOf(
-            TablesExtension.create(),
-            StrikethroughExtension.create()
-        ))
-        set(HtmlRenderer.SOFT_BREAK, "<br/>\n")
-        set(TablesExtension.COLUMN_SPANS, false)
-        set(TablesExtension.MIN_HEADER_ROWS, 1)
-        set(TablesExtension.MAX_HEADER_ROWS, 1)
-        set(TablesExtension.APPEND_MISSING_COLUMNS, true)
-        set(TablesExtension.DISCARD_EXTRA_COLUMNS, true)
-        set(TablesExtension.WITH_CAPTION, false)
-        set(TablesExtension.HEADER_SEPARATOR_COLUMN_MATCH, true)
-    }
-
-    private val parser: Parser = Parser.builder(options).build()
-    private val renderer: HtmlRenderer = HtmlRenderer.builder(options).build()
-    private val html2md: FlexmarkHtmlConverter = FlexmarkHtmlConverter.builder().build()
-
     companion object {
-        const val MAX_SIZE_BYTES = 1_048_576L // 1MB
-
-        /**
-         * 剪贴板 HTML 文档 `<body>` 默认字体（与 [StyleStyler] 正文字体栈一致）。
-         * Office/WPS 系对「完整文档 + body 基字体」更友好。
-         */
-        const val CLIPBOARD_BODY_STYLE =
-            "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans SC','Microsoft YaHei',sans-serif;"
+        const val MAX_SIZE_BYTES = ApexLinkMarkdownCore.MAX_SIZE_BYTES
+        const val CLIPBOARD_BODY_STYLE = ApexLinkMarkdownCore.CLIPBOARD_BODY_STYLE
 
         /** 无窗口时 getPrimaryClip 常为 null；通知 / 悬浮球沿用上次成功分类。 */
         @Volatile
@@ -133,8 +104,6 @@ class MarkdownConverter(
         }
     }
 
-    private val multiBlankLineRegex = Regex("\\n{3,}")
-
     private var pendingClipboardOutputHint: String? = null
     private val imgTagStripRegex = Regex("""<img\b[^>]*>""", RegexOption.IGNORE_CASE)
     private val dataImageSrcRegex = Regex("""src\s*=\s*["']data:image""", RegexOption.IGNORE_CASE)
@@ -180,19 +149,11 @@ class MarkdownConverter(
         return true
     }
 
-    fun toRawHtml(markdown: String): String {
-        val cleaned = collapseBlankLines(markdown)
-        val doc = parser.parse(cleaned)
-        return renderer.render(doc)
-    }
+    fun toRawHtml(markdown: String): String = core.toRawHtml(markdown)
 
-    fun toInlineStyledHtml(markdown: String): String {
-        val rawHtml = toRawHtml(markdown)
-        return styler.inlineAll(rawHtml)
-    }
+    fun toInlineStyledHtml(markdown: String): String = core.toInlineStyledHtml(markdown)
 
-    fun collapseBlankLines(text: String): String =
-        text.replace(multiBlankLineRegex, "\n\n")
+    fun collapseBlankLines(text: String): String = core.collapseBlankLines(text)
 
     private fun normalizeClipReadString(s: String): String =
         s.trim().removePrefix("\uFEFF").trim()
@@ -202,21 +163,6 @@ class MarkdownConverter(
         val h = (uri.host ?: "").lowercase()
         return (h.contains("wps") && h.contains("moffice")) ||
             (h.contains("kingsoft") && h.contains("moffice"))
-    }
-
-    /**
-     * 比 [looksLikeHtml] 更宽：WPS copy provider 可能返回片段、或带 Office 命名空间的标签。
-     */
-    private fun looseMarkupClipboardBody(s: String): Boolean {
-        val t = normalizeClipReadString(s)
-        if (t.length < 8) return false
-        val lower = t.lowercase()
-        if (!lower.contains("<") || !lower.contains(">")) return false
-        return lower.contains("<table") || lower.contains("<p") || lower.contains("<div") ||
-            lower.contains("<html") || lower.contains("<body") || lower.contains("<span") ||
-            lower.contains("<h1") || lower.contains("<h2") || lower.contains("<h3") ||
-            lower.contains("<tr") || lower.contains("<td") || lower.contains("<th") ||
-            lower.contains("<ul") || lower.contains("<ol") || lower.contains("<br")
     }
 
     private fun itemContentUri(item: ClipData.Item): Uri? =
@@ -231,7 +177,7 @@ class MarkdownConverter(
         if (cs !is Spanned) return null
         val asHtml = HtmlCompat.toHtml(cs, HtmlCompat.FROM_HTML_MODE_LEGACY).trim()
         if (asHtml.isEmpty()) return null
-        if (looksLikeHtml(asHtml)) return asHtml
+        if (core.looksLikeHtml(asHtml)) return asHtml
         if (asHtml.contains("<table", ignoreCase = true) ||
             asHtml.contains("<p", ignoreCase = true) ||
             asHtml.contains("<div", ignoreCase = true) ||
@@ -261,7 +207,7 @@ class MarkdownConverter(
             val body = readUtf8FromContentUri(context, u) ?: continue
             val norm = normalizeClipReadString(body)
             if (norm.isEmpty()) continue
-            if (looksLikeHtml(norm) || (isWpsOfficeClipboardUri(u) && looseMarkupClipboardBody(norm))) {
+            if (core.looksLikeHtml(norm) || (isWpsOfficeClipboardUri(u) && core.looseMarkupClipboardBody(norm))) {
                 return norm
             }
             if (isWpsOfficeClipboardUri(u) && clipMimeIndicatesHtml(clip)) {
@@ -272,10 +218,10 @@ class MarkdownConverter(
             val cs = clip.getItemAt(i).coerceToText(context) ?: continue
             coerceCharSequenceToHtmlCandidate(cs)?.let { h ->
                 val n = normalizeClipReadString(h)
-                if (n.isNotEmpty() && (looksLikeHtml(n) || n.contains("<table", ignoreCase = true))) return n
+                if (n.isNotEmpty() && (core.looksLikeHtml(n) || n.contains("<table", ignoreCase = true))) return n
             }
             val n = normalizeClipReadString(cs.toString())
-            if (n.isNotEmpty() && looksLikeHtml(n)) return n
+            if (n.isNotEmpty() && core.looksLikeHtml(n)) return n
         }
         val fallback = clip.getItemAt(0).coerceToText(context)?.toString() ?: return null
         return normalizeClipReadString(fallback)
@@ -304,7 +250,7 @@ class MarkdownConverter(
         for (i in 0 until clip.itemCount) {
             val t = clip.getItemAt(i).text ?: continue
             val norm = collapseBlankLines(normalizeClipReadString(t.toString()))
-            if (norm.isNotBlank() && isLikelyMarkdownDocument(norm)) return norm
+            if (norm.isNotBlank() && core.isLikelyMarkdownDocument(norm)) return norm
         }
         return null
     }
@@ -316,34 +262,6 @@ class MarkdownConverter(
             if (m.equals(ClipDescription.MIMETYPE_TEXT_HTML, ignoreCase = true)) return true
         }
         return false
-    }
-
-    /**
-     * 网页 / 片段 HTML → 先 html2md 再走与 Markdown 相同的渲染与内联样式（表格等尽量保留）；
-     * **含 `<table>` 的网页** 直接内联样式、不走 html2md，避免表格结构被 Flexmark 破坏导致 WPS 拒粘。
-     * 若转换为空则对内联样式做尽力注入。
-     */
-    private fun htmlSourceToStyledFragment(html: String): String {
-        val trimmed = html.trim()
-        if (trimmed.contains("<table", ignoreCase = true)) {
-            val slice = extractBodyInnerHtmlIfDocument(trimmed).ifBlank { trimmed }
-            return styler.inlineAll(slice)
-        }
-        val md = try {
-            html2md.convert(trimmed).trim()
-        } catch (_: Exception) {
-            ""
-        }
-        return if (md.isNotBlank()) {
-            toInlineStyledHtml(md)
-        } else {
-            styler.inlineAll(trimmed)
-        }
-    }
-
-    private fun extractBodyInnerHtmlIfDocument(html: String): String {
-        val m = Regex("""(?is)<body[^>]*>(.*)</body>""").find(html) ?: return ""
-        return m.groupValues[1].trim()
     }
 
     /**
@@ -365,12 +283,12 @@ class MarkdownConverter(
 
         val clipHasItemHtml = clipHasNonBlankHtmlText(clip)
         val rawIsHtml = raw.isNotEmpty() &&
-            (acceptsAsHtmlSource(raw) || looksLikeHtml(raw) || looseMarkupClipboardBody(raw))
+            (core.acceptsAsHtmlSource(raw) || core.looksLikeHtml(raw) || core.looseMarkupClipboardBody(raw))
         val plainIsHtml = plain.isNotEmpty() &&
-            (acceptsAsHtmlSource(plain) || looksLikeHtml(plain) || looseMarkupClipboardBody(plain))
+            (core.acceptsAsHtmlSource(plain) || core.looksLikeHtml(plain) || core.looseMarkupClipboardBody(plain))
         val useHtmlPipeline = clipHasItemHtml || rawIsHtml || plainIsHtml
 
-        if (isLikelyMarkdownDocument(source) && !acceptsAsHtmlSource(source) && !useHtmlPipeline) {
+        if (core.isLikelyMarkdownDocument(source) && !core.acceptsAsHtmlSource(source) && !useHtmlPipeline) {
             return convertPlainMarkdownStringToHtmlEmail(context, source)
         }
         val fragment = when {
@@ -381,9 +299,9 @@ class MarkdownConverter(
                     rawIsHtml -> raw
                     else -> plain
                 }
-                htmlSourceToStyledFragment(htmlPick)
+                core.htmlSourceToStyledFragment(htmlPick)
             }
-            else -> styler.inlineAll(styler.styledPlainParagraph(source))
+            else -> core.inlineStyledPlainSource(source)
         }
         val plainForClip = plainTextFromStyledFragment(fragment).ifEmpty { plain.ifEmpty { source } }
         writeHtmlEmailClipboard(context, plainForClip, fragment)
@@ -467,8 +385,8 @@ class MarkdownConverter(
                 val plain = normalizeClipReadString(readClipPlainAnyItem(context, clip))
                 when {
                     raw.isEmpty() && plain.isEmpty() -> ClipboardClipKind.EMPTY
-                    acceptsAsHtmlSource(raw.ifEmpty { plain }) -> ClipboardClipKind.HTML
-                    isLikelyMarkdownDocument(plain.ifEmpty { raw }) -> ClipboardClipKind.MARKDOWN
+                    core.acceptsAsHtmlSource(raw.ifEmpty { plain }) -> ClipboardClipKind.HTML
+                    core.isLikelyMarkdownDocument(plain.ifEmpty { raw }) -> ClipboardClipKind.MARKDOWN
                     else -> ClipboardClipKind.PLAIN
                 }
             }
@@ -539,7 +457,7 @@ class MarkdownConverter(
         if (html.contains("<blockquote", ignoreCase = true)) return true
         if (Regex("""<h[1-6]\b""", RegexOption.IGNORE_CASE).containsMatchIn(html)) return true
         if (html.split(Regex("""<p\b""", RegexOption.IGNORE_CASE)).size > 2) return true
-        return html.length >= 180 && looksLikeHtml(html)
+        return html.length >= 180 && core.looksLikeHtml(html)
     }
 
     /** WPS 表格等：span 多或类名暗示表格/列表，即使 toHtml 较短也视为富文本 HTML 源。 */
@@ -597,7 +515,7 @@ class MarkdownConverter(
     }
 
     /**
-     * 仅 **Markdown** → WPS 取向剪贴板（`htmlText` + `content` URI，便于手机 WPS）。
+     * 仅 **Markdown** → WPS 取向剪贴板（`htmlText` + `content` URI 首项，与 [convertMdClipboardToHtmlEmail] 不同）。
      */
     fun convertMdClipboardToWps(context: Context): ConvertResult {
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -628,7 +546,7 @@ class MarkdownConverter(
             val sizeMb = String.format("%.1f", sizeBytes / 1_048_576.0)
             return ConvertResult.TooLarge(sizeMb)
         }
-        if (!isLikelyMarkdownDocument(trimmed)) return ConvertResult.NotMarkdown
+        if (!core.isLikelyMarkdownDocument(trimmed)) return ConvertResult.NotMarkdown
         val fragment = toInlineStyledHtml(trimmed)
         val plainForClip = plainTextFromStyledFragment(fragment).ifEmpty { trimmed }
         writeWpsStyleClipboard(context, plainForClip, fragment)
@@ -647,7 +565,7 @@ class MarkdownConverter(
             val sizeMb = String.format("%.1f", sizeBytes / 1_048_576.0)
             return ConvertResult.TooLarge(sizeMb)
         }
-        if (!isLikelyMarkdownDocument(trimmed)) return ConvertResult.NotMarkdown
+        if (!core.isLikelyMarkdownDocument(trimmed)) return ConvertResult.NotMarkdown
         val fragment = toInlineStyledHtml(trimmed)
         val plainForClip = plainTextFromStyledFragment(fragment).ifEmpty { trimmed }
         writeHtmlEmailClipboard(context, plainForClip, fragment)
@@ -681,13 +599,13 @@ class MarkdownConverter(
         val raw = readClipRawForRichConvert(context, clip) ?: return ConvertResult.Empty
         val trimmed = collapseBlankLines(raw.trim())
         if (trimmed.isBlank()) return ConvertResult.Empty
-        if (!acceptsAsHtmlSource(trimmed)) return ConvertResult.NotHtml
+        if (!core.acceptsAsHtmlSource(trimmed)) return ConvertResult.NotHtml
         val sizeBytes = trimmed.toByteArray(Charsets.UTF_8).size.toLong()
         if (sizeBytes > MAX_SIZE_BYTES) {
             val sizeMb = String.format("%.1f", sizeBytes / 1_048_576.0)
             return ConvertResult.TooLarge(sizeMb)
         }
-        val fragment = htmlSourceToStyledFragment(trimmed)
+        val fragment = core.htmlSourceToStyledFragment(trimmed)
         val plainForClip = plainTextFromStyledFragment(fragment).ifEmpty { trimmed }
         writeWpsStyleClipboard(context, plainForClip, fragment)
         return ConvertResult.Success(charCount = trimmed.length, hint = takeClipboardOutputHint())
@@ -741,8 +659,8 @@ class MarkdownConverter(
         }
 
         val fragment = when {
-            isLikelyMarkdownDocument(trimmed) -> toInlineStyledHtml(trimmed)
-            acceptsAsHtmlSource(trimmed) -> htmlSourceToStyledFragment(trimmed)
+            core.isLikelyMarkdownDocument(trimmed) -> toInlineStyledHtml(trimmed)
+            core.acceptsAsHtmlSource(trimmed) -> core.htmlSourceToStyledFragment(trimmed)
             else -> return ConvertResult.NotMarkdown
         }
 
@@ -794,8 +712,8 @@ class MarkdownConverter(
     fun convertText(text: String): Pair<String, String> {
         val trimmed = collapseBlankLines(text.trim())
         val fragment = when {
-            isLikelyMarkdownDocument(trimmed) -> toInlineStyledHtml(trimmed)
-            acceptsAsHtmlSource(trimmed) -> htmlSourceToStyledFragment(trimmed)
+            core.isLikelyMarkdownDocument(trimmed) -> toInlineStyledHtml(trimmed)
+            core.acceptsAsHtmlSource(trimmed) -> core.htmlSourceToStyledFragment(trimmed)
             else -> ""
         }
         if (fragment.isBlank()) return Pair(trimmed, "")
@@ -830,7 +748,7 @@ class MarkdownConverter(
             return ConvertResult.TooLarge(sizeMb)
         }
 
-        val md = try { html2md.convert(source).trimEnd() }
+        val md = try { core.htmlToMarkdown(source).trimEnd() }
         catch (e: Exception) { return ConvertResult.Error(e.message ?: "html2md error") }
 
         if (md.isBlank()) return ConvertResult.NotHtml
@@ -840,20 +758,6 @@ class MarkdownConverter(
         return ConvertResult.Success(charCount = cleaned.length)
     }
 
-    private fun looksLikeHtml(text: String): Boolean {
-        val t = text.trim()
-        return t.startsWith("<") && t.contains(">") &&
-            Regex("<\\s*(p|div|span|h[1-6]|ul|ol|li|table|thead|tbody|tr|td|th|br|strong|em|b|i|a|img|code|pre|blockquote)\\b", RegexOption.IGNORE_CASE)
-                .containsMatchIn(t)
-    }
-
-    /** 含 WPS copy provider 返回的「宽判定」HTML 片段。 */
-    private fun acceptsAsHtmlSource(text: String): Boolean =
-        looksLikeHtml(text) || looseMarkupClipboardBody(text)
-
-    /**
-     * WPS：首项 FileProvider HTML URI + 第二项 `Item(plain, html)`，grant 给常见 WPS 包名。
-     */
     fun writeWpsStyleClipboard(context: Context, plainText: String, htmlFragment: String) {
         setPrimaryRichHtmlClipboardWps(context, plainText, htmlFragment)
     }
@@ -950,20 +854,8 @@ class MarkdownConverter(
      * 将 Flexmark 片段包成标准文档，便于微信 / WPS / 系统剪贴板等读取 text/html。
      * 含 `http-equiv` 与 `charset`、以及 `body` 默认字体，贴近 Office 系对完整 HTML 的常见预期。
      */
-    internal fun wrapClipboardHtmlDocument(fragment: String): String {
-        val t = fragment.trim()
-        if (t.startsWith("<!DOCTYPE", ignoreCase = true) ||
-            t.startsWith("<html", ignoreCase = true)
-        ) {
-            return fragment
-        }
-        return "<!DOCTYPE html><html><head>" +
-            "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">" +
-            "<meta charset=\"utf-8\">" +
-            "</head><body style=\"" + CLIPBOARD_BODY_STYLE + "\">" +
-            t +
-            "</body></html>"
-    }
+    internal fun wrapClipboardHtmlDocument(fragment: String): String =
+        core.wrapClipboardHtmlDocument(fragment)
 
     /** 去掉易干扰富文本粘贴的控制字符 / 行分隔符等。 */
     private fun sanitizeClipboardDocumentHtml(html: String): String {
@@ -1030,7 +922,7 @@ class MarkdownConverter(
                 if (!body.isNullOrBlank()) {
                     val norm = normalizeClipReadString(body)
                     if (norm.isNotEmpty() &&
-                        (looksLikeHtml(norm) || (isWpsOfficeClipboardUri(u) && looseMarkupClipboardBody(norm)) ||
+                        (core.looksLikeHtml(norm) || (isWpsOfficeClipboardUri(u) && core.looseMarkupClipboardBody(norm)) ||
                             (isWpsOfficeClipboardUri(u) && clipMimeIndicatesHtml(clip)))
                     ) {
                         return norm
@@ -1052,50 +944,12 @@ class MarkdownConverter(
                 if (n.isNotEmpty()) return n
             }
             val n = normalizeClipReadString(cs.toString())
-            if (n.isNotEmpty() && acceptsAsHtmlSource(n)) return n
+            if (n.isNotEmpty() && core.acceptsAsHtmlSource(n)) return n
         }
         val plain = readClipPlainAnyItem(context, clip).let { normalizeClipReadString(it) }
         if (plain.isEmpty()) return null
-        if (acceptsAsHtmlSource(plain)) return plain
+        if (core.acceptsAsHtmlSource(plain)) return plain
         return null
-    }
-
-    private fun hasStructuralMarkdownSignals(text: String): Boolean {
-        val t = text.trim()
-        if (t.isEmpty()) return false
-        if (Regex("^#{1,6}\\s", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (t.contains("```")) return true
-        if (Regex("^[-*+]\\s", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (Regex("^\\d+\\.\\s", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (Regex("^>\\s", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (Regex("^\\[.+]\\(.+\\)", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (Regex("!\\[[^]]*]\\([^)]+\\)").containsMatchIn(t)) return true
-        if (Regex("\\|[^\\n]+\\|\\s*\\n\\s*\\|[\\s\\-:|]+\\|", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        return false
-    }
-
-    private fun looksLikeMarkdown(text: String): Boolean {
-        val t = text.trim()
-        if (t.isEmpty()) return false
-        if (looksLikeHtml(t)) return false
-        if (Regex("^#{1,6}\\s", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (t.contains("```")) return true
-        if (Regex("^[-*+]\\s", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (Regex("^\\d+\\.\\s", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (Regex("^>\\s", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (Regex("^\\[.+]\\(.+\\)", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if (Regex("!\\[[^]]*]\\([^)]+\\)").containsMatchIn(t)) return true
-        if (Regex("\\|[^\\n]+\\|\\s*\\n\\s*\\|[\\s\\-:|]+\\|", RegexOption.MULTILINE).containsMatchIn(t)) return true
-        if ((t.contains("**") || t.contains("~~")) && t.contains('\n')) return true
-        return false
-    }
-
-    private fun isLikelyMarkdownDocument(text: String): Boolean {
-        val t = text.trim()
-        if (t.isEmpty() || looksLikeHtml(t)) return false
-        if (hasStructuralMarkdownSignals(t)) return true
-        if (t.length < 48) return false
-        return looksLikeMarkdown(t)
     }
 }
 

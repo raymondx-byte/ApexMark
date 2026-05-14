@@ -44,7 +44,6 @@ import com.apexmark.engine.ConvertActions
 import com.apexmark.engine.ConvertResult
 import com.apexmark.engine.ConvertUiFeedback
 import com.apexmark.engine.MarkdownConverter
-import com.apexmark.engine.StyleStyler
 import com.apexmark.ui.ConvertMenuUi
 
 object FloatingPortalServiceLocator {
@@ -83,7 +82,7 @@ class FloatingPortalService : Service() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    val converter: MarkdownConverter by lazy { MarkdownConverter(StyleStyler()) }
+    val converter: MarkdownConverter by lazy { MarkdownConverter() }
 
     private var screenWidth = 0
     private var isAnimating = false

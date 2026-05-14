@@ -7,7 +7,6 @@ import com.apexmark.R
 import com.apexmark.engine.ConvertResult
 import com.apexmark.engine.ConvertUiFeedback
 import com.apexmark.engine.MarkdownConverter
-import com.apexmark.engine.StyleStyler
 import com.apexmark.service.FloatingPortalService
 import com.apexmark.service.FloatingPortalServiceLocator
 
@@ -22,7 +21,7 @@ class QuickActionReceiver : BroadcastReceiver() {
         when (intent.action) {
             ACTION_CONVERT_CLIPBOARD -> {
                 val converter = FloatingPortalServiceLocator.instance?.converter
-                    ?: MarkdownConverter(StyleStyler())
+                    ?: MarkdownConverter()
                 val msg = when (val result = converter.convertClipboard(context)) {
                     is ConvertResult.Success -> context.getString(R.string.converted_wps_with_count, result.charCount)
                     is ConvertResult.PlainBlankLinesCollapsed ->
