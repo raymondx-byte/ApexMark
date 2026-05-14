@@ -40,36 +40,39 @@ jobs:
           keyPassword=${KEY_PASSWORD}
           EOF
 
-      - name: Assemble release
+      - name: Match tag to app versionName
+        run: |
+          set -euo pipefail
+          chmod +x gradlew
+          TAG_VER="${GITHUB_REF_NAME#v}"
+          APP_VER="$(./gradlew :app:printVersionName --console=plain -q | tail -n1 | tr -d '\r')"
+          echo "Git tag version: $TAG_VER"
+          echo "app/build.gradle.kts versionName: $APP_VER"
+          test "$TAG_VER" = "$APP_VER"
+
+      - name: Assemble branded release APK
         run: |
           chmod +x gradlew
-          ./gradlew :app:assembleRelease --no-daemon --stacktrace
+          ./gradlew :app:brandReleaseApk --no-daemon --stacktrace
 
-      - name: Rename APK and checksum
+      - name: SHA-256 and release notes
         id: asset
         run: |
           set -euo pipefail
           TAG="${{ github.ref_name }}"
           VERSION="${TAG#v}"
-          SRC="$(ls app/build/outputs/apk/release/*.apk | head -n1)"
-          DEST="ApexMark.${VERSION}.apk"
-          cp "$SRC" "$DEST"
-          sha256sum "$DEST" | tee SHA256SUMS.txt
-          echo "apk=$DEST" >> "$GITHUB_OUTPUT"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
-      - name: Release notes
-        run: |
-          set -euo pipefail
-          TAG="${{ github.ref_name }}"
-          VERSION="${TAG#v}"
-          APK="${{ steps.asset.outputs.apk }}"
+          APK="ApexMark.${VERSION}.apk"
+          APK_PATH="app/build/outputs/apk/release/${APK}"
+          test -f "$APK_PATH"
+          sha256sum "$APK_PATH" | tee SHA256SUMS.txt
+          echo "apk_path=$APK_PATH" >> "$GITHUB_OUTPUT"
+          echo "apk_name=$APK" >> "$GITHUB_OUTPUT"
           {
             echo "## ApexMark ${VERSION}"
             echo ""
             echo "Android **Markdown / 剪贴板** 轻量工具；本包为 **release** 签名构建。"
             echo ""
-            echo "- **安装包**: \`${APK}\`（下载列表中的文件名即此）"
+            echo "- **安装包**: \`${APK}\`"
             echo "- **提交**: [\`${{ github.sha }}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})（标签 \`${TAG}\`）"
             echo ""
             echo "### SHA-256"
@@ -77,13 +80,13 @@ jobs:
             cat SHA256SUMS.txt
             echo '```'
             echo ""
-            echo "> 校验：\`sha256sum -c SHA256SUMS.txt\`（需与 APK 同目录）"
+            echo "> 校验（APK 与 \`SHA256SUMS.txt\` 同目录）：\`sha256sum -c SHA256SUMS.txt\`"
           } > release_notes.md
 
       - uses: softprops/action-gh-release@v2
         with:
           name: "ApexMark ${{ github.ref_name }}"
           files: |
-            ${{ steps.asset.outputs.apk }}
+            ${{ steps.asset.outputs.apk_path }}
             SHA256SUMS.txt
           body_path: release_notes.md

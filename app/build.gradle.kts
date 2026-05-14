@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.ApplicationExtension
 import java.util.Properties
 import java.io.FileInputStream
 
@@ -81,6 +82,41 @@ android {
             excludes += "/META-INF/NOTICE"
             excludes += "/META-INF/NOTICE.txt"
         }
+    }
+}
+
+/** CI / 发版：release 目录只保留 `ApexMark.<versionName>.apk`，便于上传与校验。 */
+tasks.register("brandReleaseApk") {
+    group = "build"
+    description = "Run assembleRelease, then rename output to ApexMark.<versionName>.apk and remove other APKs in release/"
+    dependsOn("assembleRelease")
+    doLast {
+        val ext = project.extensions.getByName("android") as ApplicationExtension
+        val version = ext.defaultConfig.versionName ?: error("Set android.defaultConfig.versionName")
+        val outDir = layout.buildDirectory.dir("outputs/apk/release").get().asFile
+        check(outDir.isDirectory) { "Missing release output dir: $outDir — assembleRelease failed?" }
+        val dest = File(outDir, "ApexMark.$version.apk")
+        val allApks = outDir.listFiles()?.filter { it.isFile && it.extension.equals("apk", ignoreCase = true) }.orEmpty()
+        check(allApks.isNotEmpty()) { "No APK in $outDir" }
+        val preferred = listOf("app-release.apk", "app-release-unsigned.apk")
+        val source = preferred.mapNotNull { n -> allApks.find { it.name == n } }.firstOrNull()
+            ?: allApks.filter { it.name != dest.name }.maxByOrNull { it.lastModified() }
+            ?: allApks.first()
+        if (source.canonicalFile != dest.canonicalFile) {
+            source.copyTo(dest, overwrite = true)
+        }
+        allApks.forEach { f ->
+            if (f.name != dest.name && f.exists()) f.delete()
+        }
+    }
+}
+
+tasks.register("printVersionName") {
+    group = "help"
+    description = "Print android.defaultConfig.versionName (for CI tag check)"
+    doLast {
+        val ext = project.extensions.getByName("android") as ApplicationExtension
+        println(ext.defaultConfig.versionName ?: error("Set android.defaultConfig.versionName"))
     }
 }
 
