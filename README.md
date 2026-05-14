@@ -29,14 +29,14 @@
 
 **ApexMark** 解决的就是这个痛点：**复制 → 点一下 → 得到 WPS / HTML / Markdown 剪贴板**。
 
-**v1.1.0**：通知栏改为居中应用图标点击 + 二级菜单（与悬浮球同款）；表格默认透明底黑色线框；已移除「分析剪贴板」调试入口，界面更干净。
+**v1.1.0**：通知栏为系统样式行内 **居中多语言「点击转换文本」**（`notif_tap_convert_hint`）+ 半透明二级菜单（与悬浮球同款）；悬浮球判型 `ClipboardPeekActivity` 已注册；通知刷新合并防抖；表格默认透明底黑色线框；已移除「分析剪贴板」调试入口。
 
 它是一个**极轻量的"转换流"工具**，嵌入系统各个层级，随时待命。安装包小、内存占用低、零后台开销 —— 它不抢资源，只在你点击时工作。
 
 | 入口        | 操作                       | 场景      |
 | --------- | ------------------------ | ------- |
 | **悬浮球**   | 短按弹出 **→ WPS / → HTML / → MD**，长按打开主界面 | 全局任何界面  |
-| **通知栏** | 系统样式行内仅居中应用图标；点按后进二级菜单（与悬浮球同款双键） | 无自定义文案，避免与系统标题重复 |
+| **通知栏** | 系统样式行内仅 **一行居中提示**（随系统语言）；点按后进二级菜单（与悬浮球同款双键） | 状态栏小图标为透明占位，展开区无营销文案 |
 | **分享菜单**  | 从其他 App 分享文本进来           | 系统分享入口  |
 | **主界面**   | 打开 App 直接双向转换             | 最直接的方式  |
 
@@ -65,7 +65,7 @@
 
 - 品牌 Logo 圆形悬浮球，自由拖动 + 自动贴靠 + 半隐藏
 - **短按**打开转换菜单（**→ WPS / → HTML / → MD**）· **长按**打开 ApexMark，带触觉反馈
-- **通知栏常驻**：系统通知模板 + **RemoteViews 仅居中 `ic_launcher` 可点区域**（无 ApexMark 营销文案）；点击后进入透明 Activity 判型并弹出与悬浮球相同风格的**二级菜单**
+- **通知栏常驻**：`RemoteViews` **整行可点**，仅展示 **本地化「点击转换文本」** 提示；`setSmallIcon` 使用透明矢量以弱化状态栏占位；点击后经透明 Activity 判型，弹出与悬浮球相同风格的 **半透明二级菜单**
 - **前台直转**：App 在前台时直接调用引擎，杜绝任务切换动画
 - **省电优化** — 灭屏自动隐藏并暂停所有动画，常驻状态零定时器、零轮询
 
@@ -80,28 +80,66 @@
 
 支持 12 种语言：英文、简/繁中文、日、韩、法、德、意、俄、葡、西、阿。
 
-#### 🪶 轻量 & 低资源（设备实测）
+#### 🪶 轻量 & 低资源
 
-实测设备：Android `dumpsys` 真机采样，App 切后台 30s 后稳态：
+**Release APK 体积（本机构建）**：`./gradlew :app:assembleRelease` 产物约 **1.67 MB**（当前 `versionName` 下输出名为 `ApexMark.1.1.0.apk`；R8 全模式 + `minifyEnabled` + `shrinkResources`）。
 
-| 指标 | 实测值 |
-|------|--------|
-| **APK 体积** | **1.74 MB**（R8 minify + 资源压缩 + 死代码全部剥离后） |
-| **稳态 CPU**（后台 idle） | **0.0%**（连续 3 次采样 / `top -d 1`） |
-| **稳态 PSS** | **~55-60 MB**（其中约 40 MB 为 Android 框架共享内存） |
-| **熄屏 PSS** | **~55 MB**，27 MB 被 ZRAM 压缩换出 |
-| **深度 Doze CPU** | **0.0%**（`dumpsys deviceidle force-idle deep` 验证） |
-| **AlarmManager / JobScheduler / WakeLock** | **全部为空**，零隐藏唤醒 |
-| **累计电池消耗（背景）** | `cpu:bg` 在 `batterystats` 中不出现 |
+**运行时指标（PSS / CPU 等）** 与机型、ROM、是否工作资料、是否开启悬浮球强相关，**不能由仓库代测唯一真值**。下表为历史真机 `dumpsys` / `top` 采样示例（App 已启动悬浮球、切后台约 30s 后），**仅作数量级参考**；请务必用下方 **adb 指令在你自己的设备上复测**。
+
+| 指标 | 参考示例（历史采样） |
+|------|---------------------|
+| **稳态 CPU**（后台 idle） | **0.0%** 量级（短时 `top` 采样） |
+| **稳态 PSS** | **约数十 MB**（含大量系统共享映射；看 `TOTAL PSS` 与 `Private Dirty`） |
+| **AlarmManager / JobScheduler** | 预期无业务闹钟与 Job（可用 `dumpsys` 检索包名验证） |
+
+##### 资源占用自测指令（adb）
+
+前置：手机打开 **USB 调试**，PC 安装 [Platform Tools](https://developer.android.com/tools/releases/platform-tools)；在 App 内 **启动悬浮球** 后按 Home 回到桌面，等待 **30s** 再测（进程常驻、稳态更接近真实使用）。
+
+**PowerShell（Windows，仓库根目录）** — 测量本机编译出的 APK 字节数：
+
+```powershell
+(Get-Item .\app\build\outputs\apk\release\*.apk | Select-Object -First 1).FullName
+[math]::Round((Get-Item .\app\build\outputs\apk\release\*.apk | Select-Object -First 1).Length / 1MB, 2)
+```
+
+**adb 与包名**（多用户 / 工作资料若报错，可加 `--user 0` 或先 `adb shell pm list users`）：
+
+```powershell
+$pkg = "com.apexmark"
+adb devices
+adb shell pm path --user 0 $pkg
+adb shell dumpsys meminfo $pkg
+adb shell "ps -A | grep $pkg"
+adb shell "top -b -n 5 -d 1 2>/dev/null | grep -i apexmark || true"
+adb shell dumpsys alarm | findstr /i apexmark
+adb shell dumpsys jobscheduler | findstr /i apexmark
+adb shell dumpsys batterystats --charged $pkg
+```
+
+说明：`dumpsys meminfo` 在进程未启动时会提示 `No process found`，属正常；`top` 在部分 ROM 上参数不同，可改用 `adb shell pidof $pkg` 拿到 PID 后再查 `/proc/<pid>/status`。
+
+**Bash（macOS / Linux）**：
+
+```bash
+PKG=com.apexmark
+ls -lh app/build/outputs/apk/release/*.apk
+adb shell pm path --user 0 "$PKG"
+adb shell dumpsys meminfo "$PKG"
+adb shell dumpsys alarm | grep -i apexmark || true
+adb shell dumpsys jobscheduler | grep -i apexmark || true
+adb shell dumpsys batterystats --charged "$PKG" | head -n 80
+```
 
 代码层保证：
 
-- **常驻态零定时器** — 整个 Service 没有任何 `postAtTime`/`Timer`/`WorkManager`/`Worker`/协程轮询
+- **常驻态无轮询** — Service 不使用 `Timer` / `WorkManager` / 协程周期轮询；剪贴板触发的通知 UI 仅 **Handler 短延迟合并**（非周期）
 - **事件驱动唤醒** — 仅注册 `ACTION_SCREEN_ON/OFF` 两个系统广播；其余唤醒全部来自用户触摸或通知栏点击
 - **灭屏自动节流** — 悬浮球在屏幕关闭瞬间 `visibility=GONE`、所有 `Animator` 立即 `cancel()`
 - **共享转换引擎** — Service / 透明 Activity / MainActivity 三处共用同一份 `MarkdownConverter` 实例（Flexmark parser 只初始化一次）
 - **前台直转优化** — App 在前台时直接调用引擎，跳过透明 Activity 桥接，零任务切换开销
 - **单一前台 Service** — 只为通知栏常驻保留一个轻量 Service，无 IPC、无额外进程、无 worker
+- **通知 UI 防抖** — 剪贴板变化等高频触发在主线程 **短延迟合并** 为单次 `startForeground` 更新同一通知 ID，避免连续 `notify` 与多余 Binder 调用
 - **冷启即用** — 进程一启动就在 main looper 首位排队启动通知，毫秒级可用
 
 #### 🛡️ 安全 & 隐私
@@ -122,10 +160,12 @@ com.apexmark/
 │   ├── FloatingPortalService.kt    # 悬浮球 + 通知栏前台 Service
 │   ├── ClipboardConvertActivity.kt # 桥接 Activity (Android 10+ 剪贴板访问)
 │   ├── ClipboardPeekActivity.kt    # 悬浮球判型用透明 Activity
-│   └── NotificationMenuActivity.kt # 通知图标点击 → 二级菜单
+│   └── NotificationMenuActivity.kt # 通知「点击转换」→ 二级菜单
+├── ui/
+│   ├── ConvertMenuUi.kt            # 通知/悬浮球二级菜单半透明样式（共享）
+│   └── …                           # Compose 主题与组件（Material 3）
 ├── receiver/
 │   └── QuickActionReceiver.kt      # 快捷指令广播
-├── ui/                              # Compose UI + Material 3 主题
 └── MainActivity.kt                  # 主入口 + 权限引导 + About / 主题
 ```
 
@@ -136,7 +176,7 @@ com.apexmark/
 | 语言          | Kotlin 2.0                                         |
 | UI          | Jetpack Compose + Material 3                       |
 | Markdown ↔ HTML | Flexmark-java (GFM Tables / Strikethrough / Html2Md) |
-| 包体大小（release） | **1.74 MB**                                    |
+| 包体大小（release） | **约 1.67 MB**（本机 `assembleRelease` 实测）            |
 | 最低系统        | Android 8.0 (API 26)                               |
 | 目标系统        | Android 14 (API 34)                                |
 
@@ -154,10 +194,10 @@ cd ApexMark
 
 ApexMark 通过 **GitHub Releases** 分发，**不上架** Google Play / 国内应用商店。
 
-📥 **[点此下载最新版 APK](https://github.com/raymondx-byte/ApexMark/releases/latest)**（约 1.74 MB）
+📥 **[点此下载最新版 APK](https://github.com/raymondx-byte/ApexMark/releases/latest)**（约 1.67 MB，以 Releases 页实际文件为准）
 
 1. 打开 [Releases 页](https://github.com/raymondx-byte/ApexMark/releases)
-2. 下载最新版 `app-release.apk`（约 1.74 MB）
+2. 下载最新版 release APK（约 1.67 MB，随构建略有浮动）
 3. 在手机上打开 APK 文件
 4. 首次安装时，系统会提示「来自此来源的应用」未授权 → 允许即可
 5. 安装完成后按 App 内引导授予「悬浮窗」权限
@@ -205,14 +245,14 @@ When you copy answers from AI chat tools (ChatGPT, Claude, Gemini…) and paste 
 
 **ApexMark** solves this in one tap: **copy → tap → get a WPS, HTML, or Markdown clipboard**.
 
-**v1.1.0** refines the notification to a **system-style row with a centered app icon** (no custom marketing copy) that opens the same secondary menu as the bubble; default Markdown tables stay neutral (transparent cells, black borders); the clipboard debug inspector is removed for a cleaner release build.
+**v1.1.0** ships a **system-style notification row** with a **centered, localized “tap to convert” hint** (no marketing copy), a **translucent** secondary sheet matching the bubble, a registered **clipboard peek** activity for the bubble path, **debounced** notification refresh, neutral Markdown tables (transparent cells, black borders), and removes the clipboard debug inspector.
 
 It is a **featherweight "conversion pipe"** woven into every system layer. Small footprint, low memory, zero background work — it never steals resources and only runs when you tap.
 
 | Entry point      | Action                                | Scenario          |
 | ---------------- | ------------------------------------- | ----------------- |
 | **Floating bubble** | Tap opens **→ WPS / → HTML / → MD**; long-press opens ApexMark | Any screen, anywhere |
-| **Notification** | Three rows, two compact actions per row (labels follow clipboard type) | Always-on in the shade |
+| **Notification** | One **centered line** of localized hint text; tap opens the same secondary menu as the bubble | Status-bar slot uses a **minimal transparent** small icon; expanded custom view has no extra branding text |
 | **Share menu**      | Receive text from any app              | System share intent |
 | **Main screen**     | Bidirectional one-tap                  | Most direct       |
 
@@ -241,7 +281,7 @@ It is a **featherweight "conversion pipe"** woven into every system layer. Small
 
 - Branded circular bubble, draggable, auto-snap, half-hidden idle state
 - **Tap** opens the convert menu (**→ WPS / → HTML / → MD**); **long-press** opens ApexMark (with haptic feedback)
-- **Persistent notification** — standard notification chrome + **RemoteViews that only show a centered launcher icon** as the tap target; opens a transparent activity for clipboard peek, then the same **secondary menu** as the bubble (type line + two actions)
+- **Persistent notification** — `RemoteViews` with a **full-width tappable row** showing only the localized **“tap to convert text”** hint; `setSmallIcon` uses a **transparent vector** to keep the status icon unobtrusive; tap runs clipboard classification, then the same **translucent secondary menu** as the bubble (type line + two actions)
 - **Foreground shortcut** — when the app is in front, conversion runs in-process to avoid task-switch animations
 - **Battery friendly** — bubble hides on screen-off, zero timers, zero polling
 
@@ -256,28 +296,66 @@ It is a **featherweight "conversion pipe"** woven into every system layer. Small
 
 12 languages out of the box: English, Simplified & Traditional Chinese, Japanese, Korean, French, German, Italian, Russian, Portuguese, Spanish, Arabic.
 
-#### 🪶 Lightweight & low-resource (measured on device)
+#### 🪶 Lightweight & low-resource
 
-Measured on a real device via Android `dumpsys`, sampled at the 30 s post-backgrounding steady state:
+**Release APK size (local build)**: `./gradlew :app:assembleRelease` is currently about **1.67 MB** on this tree (artifact name follows `versionName`, e.g. `ApexMark.1.1.0.apk`; R8 full mode + `minifyEnabled` + `shrinkResources`).
 
-| Metric | Measured |
-|--------|----------|
-| **APK size** | **1.74 MB** (R8 minify + resource shrink + full dead-code removal) |
-| **Steady-state CPU** (background idle) | **0.0%** (3 consecutive `top -d 1` samples) |
-| **Steady-state PSS** | **~55–60 MB** (~40 MB of which is shared Android-framework memory) |
-| **Screen-off PSS** | **~55 MB**, 27 MB compressed into ZRAM |
-| **Deep-Doze CPU** | **0.0%** (verified with `dumpsys deviceidle force-idle deep`) |
-| **AlarmManager / JobScheduler / WakeLocks** | **all empty** — zero hidden wake-ups |
-| **Cumulative background battery** | `cpu:bg` does not appear in `batterystats` |
+**Runtime metrics (PSS, CPU, …)** depend heavily on device, OEM ROM, work profile, and whether the bubble service is running. The repo **cannot** publish a single authoritative number for everyone. The table below is a **historical lab sample** (bubble started, app backgrounded ~30 s); treat it as **order-of-magnitude only** and re-measure with the **adb recipes** in this section.
+
+| Metric | Historical sample (reference only) |
+|--------|------------------------------------|
+| **Steady-state CPU** (background idle) | **~0%** in short `top` windows |
+| **Steady-state PSS** | **Tens of MB** (includes large shared mappings; read `TOTAL PSS` vs `Private Dirty` in `meminfo`) |
+| **AlarmManager / JobScheduler** | Expect **no** app-owned alarms/jobs (verify by grepping your package in `dumpsys`) |
+
+##### adb recipes (reproduce on your device)
+
+Prerequisites: **USB debugging** on the phone, [Platform Tools](https://developer.android.com/tools/releases/platform-tools) on the PC. In ApexMark, **start the floating bubble**, press Home, wait **~30 s**, then run the commands.
+
+**PowerShell (Windows, repo root)** — measure the built APK on disk:
+
+```powershell
+(Get-Item .\app\build\outputs\apk\release\*.apk | Select-Object -First 1).FullName
+[math]::Round((Get-Item .\app\build\outputs\apk\release\*.apk | Select-Object -First 1).Length / 1MB, 2)
+```
+
+**adb + package** (if you hit a multi-user / work-profile error, add `--user 0` or inspect `adb shell pm list users`):
+
+```powershell
+$pkg = "com.apexmark"
+adb devices
+adb shell pm path --user 0 $pkg
+adb shell dumpsys meminfo $pkg
+adb shell "ps -A | grep $pkg"
+adb shell "top -b -n 5 -d 1 2>/dev/null | grep -i apexmark || true"
+adb shell dumpsys alarm | findstr /i apexmark
+adb shell dumpsys jobscheduler | findstr /i apexmark
+adb shell dumpsys batterystats --charged $pkg
+```
+
+Note: `dumpsys meminfo` prints `No process found` until the app process is alive (start the bubble first). Some OEMs ship a non-GNU `top`; use `adb shell pidof $pkg` and inspect `/proc/<pid>/` if needed.
+
+**Bash (macOS / Linux)**:
+
+```bash
+PKG=com.apexmark
+ls -lh app/build/outputs/apk/release/*.apk
+adb shell pm path --user 0 "$PKG"
+adb shell dumpsys meminfo "$PKG"
+adb shell dumpsys alarm | grep -i apexmark || true
+adb shell dumpsys jobscheduler | grep -i apexmark || true
+adb shell dumpsys batterystats --charged "$PKG" | head -n 80
+```
 
 Code-level guarantees:
 
-- **Zero timers in the resident state** — no `postAtTime`, no `Timer`, no `WorkManager`, no coroutine polling
+- **Zero polling in the resident state** — no `Timer`, no `WorkManager`, no coroutine polling loops; clipboard-driven notification updates use a **short Handler debounce** only (not periodic)
 - **Event-driven wake-ups only** — registers `ACTION_SCREEN_ON/OFF` broadcasts; every other wake comes from user touch or notification tap
 - **Screen-off throttling** — the bubble's `visibility=GONE` and all `Animator`s `cancel()` instantly on screen-off
 - **Shared conversion engine** — service / bridging Activity / MainActivity share a single `MarkdownConverter` instance (Flexmark parser is initialized once)
 - **In-process fast path** — when the app is in the foreground, conversion runs directly without the bridging Activity, eliminating task-switch overhead
 - **One lean foreground service** — kept alive only to host the persistent notification; no IPC, no extra processes, no workers
+- **Notification UI debounce** — clipboard-driven updates are **coalesced** on the main thread into a single delayed `startForeground` refresh for the same notification id (avoids rapid `notify` / extra Binder traffic)
 - **Cold-start ready** — the notification is enqueued at the head of the main looper the moment the process boots
 
 #### 🛡️ Privacy
@@ -292,9 +370,9 @@ Code-level guarantees:
 ```
 com.apexmark/
 ├── engine/        Markdown ↔ HTML core, inline-CSS styler
-├── service/       Foreground service for bubble + notification, bridging activity
-├── receiver/      Broadcast receivers for quick actions / shortcuts
-├── ui/            Jetpack Compose screens, Material 3 theme
+├── service/       Foreground service (bubble + notification), peek & bridge activities, notification menu
+├── receiver/      Quick-action broadcasts
+├── ui/            `ConvertMenuUi` (shared translucent menu chrome) + Compose / Material 3
 └── MainActivity.kt  Entry, permissions, About & theme sheets
 ```
 
@@ -305,7 +383,7 @@ com.apexmark/
 | Language         | Kotlin 2.0                                            |
 | UI               | Jetpack Compose · Material 3                          |
 | Markdown ↔ HTML  | Flexmark-java (GFM Tables, Strikethrough, Html2Md)    |
-| Release APK size | **1.74 MB**                                           |
+| Release APK size | **~1.67 MB** (local `assembleRelease`; see Releases for exact bytes) |
 | minSdk           | Android 8.0 (API 26)                                  |
 | targetSdk        | Android 14 (API 34)                                   |
 
@@ -323,10 +401,10 @@ cd ApexMark
 
 ApexMark is distributed exclusively through **GitHub Releases** — it is **not** published to Google Play or any other store.
 
-📥 **[Download the latest APK](https://github.com/raymondx-byte/ApexMark/releases/latest)** (~1.74 MB)
+📥 **[Download the latest APK](https://github.com/raymondx-byte/ApexMark/releases/latest)** (~1.67 MB; exact size on the Releases asset)
 
 1. Open the [Releases page](https://github.com/raymondx-byte/ApexMark/releases)
-2. Download the latest `app-release.apk` (~1.74 MB)
+2. Download the latest release APK (~1.67 MB; may vary slightly per build)
 3. Open the APK on your phone
 4. On first install your phone will warn that "apps from this source aren't verified" — allow it for ApexMark
 5. After installing, follow the in-app prompt to grant the **Display over other apps** permission
