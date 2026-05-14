@@ -10,38 +10,68 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.os.SystemClock
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import android.view.WindowManager
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.RemoteViews
-import android.widget.Toast
+import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import com.apexmark.AppForegroundTracker
+import com.apexmark.MainActivity
 import com.apexmark.R
+import com.apexmark.engine.ClipboardClipKind
+import com.apexmark.engine.ConvertActions
 import com.apexmark.engine.ConvertResult
+import com.apexmark.engine.ConvertUiFeedback
 import com.apexmark.engine.MarkdownConverter
 import com.apexmark.engine.StyleStyler
+import com.apexmark.ui.ConvertMenuUi
 
 object FloatingPortalServiceLocator {
     var instance: FloatingPortalService? = null
-    /** 公开给 UI 观察的悬浮球可见态。 */
     val bubbleVisibleFlow = kotlinx.coroutines.flow.MutableStateFlow(false)
+
+    /** 与主界面 Compose 对齐：在打开 App / 手势刷新通知时递增。 */
+    val clipboardUiEpoch = kotlinx.coroutines.flow.MutableStateFlow(0L)
+
+    private val mainHandler = Handler(Looper.getMainLooper())
+
+    fun notifyConvertResult(success: Boolean) {
+        instance?.onConvertResult(success)
+    }
+
+    fun requestNotificationUpdate() {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            applyClipboardUiEpochAndRefresh()
+        } else {
+            mainHandler.post { applyClipboardUiEpochAndRefresh() }
+        }
+    }
+
+    private fun applyClipboardUiEpochAndRefresh() {
+        clipboardUiEpoch.value = clipboardUiEpoch.value + 1L
+        instance?.scheduleNotificationRefresh()
+    }
 }
 
 class FloatingPortalService : Service() {
@@ -53,7 +83,6 @@ class FloatingPortalService : Service() {
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    /** 转换引擎按需懒构造（Flexmark 初始化约 100ms，一次性付费）。 */
     val converter: MarkdownConverter by lazy { MarkdownConverter(StyleStyler()) }
 
     private var screenWidth = 0
@@ -68,15 +97,45 @@ class FloatingPortalService : Service() {
     private var initialTouchX = 0f
     private var initialTouchY = 0f
     private var isDragging = false
-    private var touchDownTime = 0L
     private var longPressTriggered = false
 
     private val autoDockRunnable = Runnable { if (!isDocked && !isAnimating) snapToEdge() }
-    private val resetAnimatingRunnable = Runnable { isAnimating = false }
+    private val resetAnimatingRunnable = Runnable {
+        isAnimating = false
+        iconView?.rotation = 0f
+    }
     private val longPressRunnable = Runnable {
         if (!isDragging) {
             longPressTriggered = true
             onBubbleLongPress()
+        }
+    }
+    /** 剪贴板变化等高频事件合并为一次刷新，减轻 NotificationManager / Binder 压力。 */
+    private val clipRefreshDebounced = Runnable { applyForegroundNotificationUpdate() }
+
+    private var clipboardManager: ClipboardManager? = null
+    private val primaryClipChangedListener = ClipboardManager.OnPrimaryClipChangedListener {
+        MarkdownConverter.discardPendingPeekAfterClipboardChanged()
+        scheduleNotificationRefresh()
+    }
+
+    private fun applyForegroundNotificationUpdate() {
+        try {
+            val notification = buildNotification()
+            startForeground(NOTIFICATION_ID, notification)
+        } catch (_: Exception) {}
+    }
+
+    fun scheduleNotificationRefresh() {
+        mainHandler.removeCallbacks(clipRefreshDebounced)
+        mainHandler.postDelayed(clipRefreshDebounced, 180L)
+    }
+
+    private fun refreshNotificationFromUserGesture() {
+        try {
+            MarkdownConverter.discardPendingPeekAfterClipboardChanged()
+            applyForegroundNotificationUpdate()
+        } catch (_: Exception) {
         }
     }
 
@@ -95,7 +154,6 @@ class FloatingPortalService : Service() {
 
         const val ACTION_SHOW_BUBBLE = "com.apexmark.SHOW_BUBBLE"
         const val ACTION_TOGGLE_BUBBLE = "com.apexmark.TOGGLE_BUBBLE"
-        const val ACTION_CONVERT = "com.apexmark.CONVERT"
 
         fun start(context: Context) {
             val intent = Intent(context, FloatingPortalService::class.java)
@@ -145,6 +203,8 @@ class FloatingPortalService : Service() {
         FloatingPortalServiceLocator.instance = this
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         screenWidth = resources.displayMetrics.widthPixels
+        clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        clipboardManager?.addPrimaryClipChangedListener(primaryClipChangedListener)
 
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, buildNotification())
@@ -155,6 +215,11 @@ class FloatingPortalService : Service() {
         super.onDestroy()
         FloatingPortalServiceLocator.instance = null
         mainHandler.removeCallbacksAndMessages(null)
+        try {
+            clipboardManager?.removePrimaryClipChangedListener(primaryClipChangedListener)
+        } catch (_: Exception) {
+        }
+        clipboardManager = null
         try { unregisterReceiver(screenReceiver) } catch (_: Exception) {}
         removeBubble()
     }
@@ -259,19 +324,16 @@ class FloatingPortalService : Service() {
         bubbleContainer?.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    refreshNotificationFromUserGesture()
                     isDragging = false
                     longPressTriggered = false
-                    touchDownTime = SystemClock.elapsedRealtime()
                     initialX = layoutParams?.x ?: 0
                     initialY = layoutParams?.y ?: 0
                     initialTouchX = event.rawX
                     initialTouchY = event.rawY
                     mainHandler.removeCallbacks(autoDockRunnable)
                     bubbleContainer?.animate()?.alpha(ACTIVE_ALPHA)?.setDuration(80)?.start()
-                    // 仅在弹出态接受长按（贴边态首次点击只是弹出）
-                    if (!isDocked) {
-                        mainHandler.postDelayed(longPressRunnable, LONG_PRESS_MS)
-                    }
+                    mainHandler.postDelayed(longPressRunnable, LONG_PRESS_MS)
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
@@ -294,9 +356,8 @@ class FloatingPortalService : Service() {
                 MotionEvent.ACTION_UP -> {
                     mainHandler.removeCallbacks(longPressRunnable)
                     when {
-                        longPressTriggered -> { /* 已触发长按，无需 click */ }
+                        longPressTriggered -> Unit
                         isDragging -> snapToEdge()
-                        isDocked -> popOutFromEdge()
                         else -> onBubbleClick()
                     }
                     true
@@ -331,25 +392,6 @@ class FloatingPortalService : Service() {
         isDocked = true
     }
 
-    private fun popOutFromEdge() {
-        val sizePx = (BUBBLE_SIZE_DP * resources.displayMetrics.density).toInt()
-        val currentX = layoutParams?.x ?: 0
-        val targetX = if (isDockedLeft) 0 else screenWidth - sizePx
-
-        ValueAnimator.ofInt(currentX, targetX).apply {
-            duration = 250
-            interpolator = OvershootInterpolator(1.5f)
-            addUpdateListener { anim ->
-                layoutParams?.x = anim.animatedValue as Int
-                try { bubbleContainer?.let { windowManager.updateViewLayout(it, layoutParams) } } catch (_: Exception) {}
-            }
-            start()
-        }
-        bubbleContainer?.animate()?.alpha(IDLE_ALPHA)?.setDuration(200)?.start()
-        isDocked = false
-        scheduleAutoDock()
-    }
-
     private fun scheduleAutoDock() {
         mainHandler.removeCallbacks(autoDockRunnable)
         mainHandler.postDelayed(autoDockRunnable, AUTO_DOCK_DELAY)
@@ -357,30 +399,151 @@ class FloatingPortalService : Service() {
 
     // region Conversion
 
+    private fun labelForConvertAction(action: String, plainTidyLabels: Boolean = false): String {
+        if (plainTidyLabels) return getString(R.string.notif_plain_tidy_blanks)
+        return when (action) {
+            ConvertActions.MD_TO_WPS -> getString(R.string.notif_md_wps)
+            ConvertActions.MD_TO_HTML_EMAIL -> getString(R.string.notif_md_html)
+            ConvertActions.HTML_TO_WPS -> getString(R.string.notif_html_wps)
+            ConvertActions.HTML_OR_TEXT_TO_MD -> getString(R.string.notif_html_text_md)
+            ConvertActions.WPS_OR_TEXT_TO_MD -> getString(R.string.notif_wps_text_md)
+            ConvertActions.WPS_TO_MD -> getString(R.string.notif_wps_md)
+            ConvertActions.CLIPBOARD_TO_HTML_EMAIL -> getString(R.string.notif_clipboard_to_html_email)
+            else -> getString(R.string.notif_md_wps)
+        }
+    }
+
+    private fun menuDp(px: Int): Int = (px * resources.displayMetrics.density + 0.5f).toInt()
+
+    @SuppressLint("SetTextI18n")
     private fun onBubbleClick() {
+        if (isAnimating) return
+        refreshNotificationFromUserGesture()
+        startClipboardPeekForBubble()
+    }
+
+    private fun startClipboardPeekForBubble() {
+        try {
+            startActivity(
+                Intent(this, ClipboardPeekActivity::class.java).apply {
+                    putExtra(ClipboardPeekActivity.EXTRA_PEEK_TARGET, ClipboardPeekActivity.PEEK_BUBBLE)
+                    addFlags(
+                        Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_NO_ANIMATION or
+                            Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or
+                            Intent.FLAG_ACTIVITY_NO_HISTORY
+                    )
+                }
+            )
+        } catch (_: Exception) {
+        }
+    }
+
+    /** 由 [ClipboardPeekActivity] 在焦点判型后调用；须同步执行，否则 Activity 立即 finish 会导致 PopupWindow 无法附着。 */
+    @SuppressLint("SetTextI18n")
+    internal fun showBubbleConvertMenu(kind: ClipboardClipKind) {
+        if (!bubbleVisible || isAnimating) return
+        if (kind == ClipboardClipKind.IMAGE) {
+            ConvertUiFeedback.showCenteredToast(this, getString(R.string.clipboard_image_unsupported))
+            return
+        }
+        val anchor = bubbleContainer ?: return
+        val (primary, secondary) = ConvertActions.primarySecondaryForKind(kind)
+        val plainTidy = kind == ClipboardClipKind.PLAIN
+
+        val btnWidth = menuDp(268)
+        val pillRadius = menuDp(999).toFloat()
+        val strokeW = menuDp(2)
+        val primaryBg = ConvertMenuUi.primaryPill(pillRadius)
+        val secondaryBg = ConvertMenuUi.secondaryPill(pillRadius, strokeW)
+
+        lateinit var pw: PopupWindow
+        val tvPrimary = TextView(this).apply {
+            text = labelForConvertAction(primary, plainTidy)
+            setTextColor(Color.WHITE)
+            textSize = 13f
+            gravity = Gravity.CENTER
+            includeFontPadding = false
+            setPadding(menuDp(20), menuDp(14), menuDp(20), menuDp(14))
+            background = primaryBg
+            setOnClickListener {
+                pw.dismiss()
+                startConvertFromBubble(primary)
+            }
+        }
+        val tvSecondary = TextView(this).apply {
+            text = labelForConvertAction(secondary, plainTidy)
+            setTextColor(Color.parseColor("#0050B0"))
+            textSize = 13f
+            gravity = Gravity.CENTER
+            includeFontPadding = false
+            setPadding(menuDp(20), menuDp(14), menuDp(20), menuDp(14))
+            background = secondaryBg
+            setOnClickListener {
+                pw.dismiss()
+                startConvertFromBubble(secondary)
+            }
+        }
+
+        val panel = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = menuDp(18)
+            setPadding(pad, pad, pad, pad)
+            background = ConvertMenuUi.panelCard(menuDp(28).toFloat(), menuDp(1))
+            elevation = menuDp(6).toFloat()
+            val lp1 = LinearLayout.LayoutParams(btnWidth, ViewGroup.LayoutParams.WRAP_CONTENT)
+            lp1.bottomMargin = menuDp(12)
+            addView(tvPrimary, lp1)
+            addView(tvSecondary, LinearLayout.LayoutParams(btnWidth, ViewGroup.LayoutParams.WRAP_CONTENT))
+        }
+
+        pw = PopupWindow(
+            panel,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        ).apply {
+            elevation = menuDp(10).toFloat()
+            isOutsideTouchable = true
+            isFocusable = true
+            setBackgroundDrawable(android.graphics.drawable.ColorDrawable(Color.TRANSPARENT))
+        }
+
+        panel.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val mw = panel.measuredWidth
+        val mh = panel.measuredHeight
+        val loc = IntArray(2)
+        anchor.getLocationOnScreen(loc)
+        val dm = resources.displayMetrics
+        val xOff = (dm.widthPixels - mw) / 2 - loc[0]
+        val yOff = (dm.heightPixels - mh) / 2 - loc[1]
+        pw.showAtLocation(anchor, Gravity.TOP or Gravity.START, xOff, yOff)
+    }
+
+    private fun startConvertFromBubble(action: String) {
         if (isAnimating) return
         isAnimating = true
         startSpinAnimation()
-        launchConvertActivity(ClipboardConvertActivity.DIR_MD_TO_HTML)
+        launchConvertActivity(action)
         mainHandler.removeCallbacks(resetAnimatingRunnable)
         mainHandler.postDelayed(resetAnimatingRunnable, ANIMATING_TIMEOUT)
     }
 
     private fun onBubbleLongPress() {
-        if (isAnimating) return
-        isAnimating = true
-        startSpinAnimation(reverse = true)
-        // 触觉反馈，区别于短按
         bubbleContainer?.performHapticFeedback(android.view.HapticFeedbackConstants.LONG_PRESS)
-        launchConvertActivity(ClipboardConvertActivity.DIR_HTML_TO_MD)
-        mainHandler.removeCallbacks(resetAnimatingRunnable)
-        mainHandler.postDelayed(resetAnimatingRunnable, ANIMATING_TIMEOUT)
+        startActivity(
+            Intent(this, MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+        )
     }
 
-    private fun launchConvertActivity(direction: String) {
-        // 若 app 自身已在前台，直接调用引擎，避免任务切换的放大缩小动画。
+    private fun launchConvertActivity(action: String) {
         if (AppForegroundTracker.isForeground) {
-            convertDirectly(direction)
+            convertDirectly(action)
             return
         }
         val intent = Intent(this, ClipboardConvertActivity::class.java).apply {
@@ -389,36 +552,25 @@ class FloatingPortalService : Service() {
                 Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or
                 Intent.FLAG_ACTIVITY_NO_HISTORY or
                 Intent.FLAG_ACTIVITY_NO_USER_ACTION)
-            putExtra(ClipboardConvertActivity.EXTRA_DIRECTION, direction)
+            putExtra(ConvertActions.EXTRA, action)
         }
         startActivity(intent)
     }
 
-    private fun convertDirectly(direction: String) {
+    private fun convertDirectly(action: String) {
         val result: ConvertResult = try {
-            if (direction == ClipboardConvertActivity.DIR_HTML_TO_MD)
-                converter.convertHtmlClipboardToMarkdown(this)
-            else
-                converter.convertClipboard(this)
+            converter.convertForAction(this, action)
         } catch (e: Exception) {
             ConvertResult.Error(e.message ?: "error")
         }
-        val (ok, msg) = formatResult(direction, result)
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        val (ok, msg) = ConvertUiFeedback.toastMessage(this, action, result)
+        ConvertUiFeedback.showCenteredToast(this, msg)
         onConvertResult(ok)
+        FloatingPortalServiceLocator.requestNotificationUpdate()
     }
 
-    private fun formatResult(direction: String, result: ConvertResult): Pair<Boolean, String> = when (result) {
-        is ConvertResult.Success -> true to if (direction == ClipboardConvertActivity.DIR_HTML_TO_MD)
-            getString(R.string.converted_to_markdown_with_count, result.charCount)
-        else
-            getString(R.string.converted_success_with_count, result.charCount)
-        is ConvertResult.Empty -> false to getString(R.string.clipboard_empty)
-        is ConvertResult.NotMarkdown -> false to getString(R.string.not_markdown)
-        is ConvertResult.NotHtml -> false to getString(R.string.not_html)
-        is ConvertResult.TooLarge -> false to getString(R.string.content_too_large, result.sizeMb)
-        is ConvertResult.Error -> false to getString(R.string.convert_error, result.message.take(50))
-    }
+    /** 通知二级菜单等：前台时直接转换（与 [convertDirectly] 相同）。 */
+    fun performConvertDirectly(action: String) = convertDirectly(action)
 
     fun onConvertResult(success: Boolean) {
         mainHandler.removeCallbacks(resetAnimatingRunnable)
@@ -495,45 +647,34 @@ class FloatingPortalService : Service() {
         }
     }
 
-    private fun buildNotification(): Notification {
-        val mdIntent = PendingIntent.getActivity(
-            this, 2,
-            Intent(this, ClipboardConvertActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_NO_ANIMATION or
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or
-                    Intent.FLAG_ACTIVITY_NO_HISTORY or
-                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
-                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-                putExtra(ClipboardConvertActivity.EXTRA_DIRECTION, ClipboardConvertActivity.DIR_MD_TO_HTML)
-            },
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        val htmlIntent = PendingIntent.getActivity(
-            this, 4,
-            Intent(this, ClipboardConvertActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_NO_ANIMATION or
-                    Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or
-                    Intent.FLAG_ACTIVITY_NO_HISTORY or
-                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
-                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT)
-                putExtra(ClipboardConvertActivity.EXTRA_DIRECTION, ClipboardConvertActivity.DIR_HTML_TO_MD)
+    private fun notificationMenuPendingIntent(): PendingIntent =
+        PendingIntent.getActivity(
+            this, 905,
+            Intent(this, NotificationMenuActivity::class.java).apply {
+                addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_NO_ANIMATION or
+                        Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or
+                        Intent.FLAG_ACTIVITY_NO_HISTORY or
+                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
+                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT
+                )
             },
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
+    private fun buildNotification(): Notification {
+        val menuPi = notificationMenuPendingIntent()
         val rv = RemoteViews(packageName, R.layout.notification_convert)
-        rv.setTextViewText(R.id.notification_title, getString(R.string.bubble_running))
-        rv.setTextViewText(R.id.btn_convert, getString(R.string.notification_md_to_html))
-        rv.setTextViewText(R.id.btn_html_to_md, getString(R.string.notification_html_to_md))
-        rv.setOnClickPendingIntent(R.id.btn_convert, mdIntent)
-        rv.setOnClickPendingIntent(R.id.btn_html_to_md, htmlIntent)
+        rv.setTextViewText(R.id.notif_tap_convert, getString(R.string.notif_tap_convert_hint))
+        rv.setOnClickPendingIntent(R.id.notif_tap_convert, menuPi)
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notification)
+            .setSmallIcon(R.drawable.ic_notif_stat_silent)
+            .setShowWhen(false)
             .setCustomContentView(rv)
             .setCustomBigContentView(rv)
+            .setContentIntent(menuPi)
             .setOngoing(true)
             .setSilent(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -545,6 +686,7 @@ class FloatingPortalService : Service() {
             ACTION_SHOW_BUBBLE -> if (!bubbleVisible) { createBubble() }
             ACTION_TOGGLE_BUBBLE -> toggleBubble()
         }
+        FloatingPortalServiceLocator.requestNotificationUpdate()
         return START_STICKY
     }
 }

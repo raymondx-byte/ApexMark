@@ -2,11 +2,9 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → リッチテキスト · ワンタップ変換</string>
+    <string name="app_subtitle">ワンタップ：Markdown ↔ WPSクリップ ↔ HTML — 整形貼り付けを高速化</string>
 
     <!-- Convert flow -->
-    <string name="convert_clipboard">クリップボードを変換</string>
-    <string name="convert_clipboard_content">クリップボードの内容を変換</string>
     <string name="converted_success">✓ Word形式に変換しました</string>
     <string name="converted_success_with_count">✓ Word形式に変換しました（%d文字）</string>
     <string name="converted_chars">✓ %d文字を変換しました</string>
@@ -22,11 +20,12 @@
 
     <!-- Floating bubble -->
     <string name="bubble_running">ApexMark 実行中</string>
-    <string name="bubble_description">フローティングバブルをタップして Markdown → リッチテキストに変換</string>
+    <string name="bubble_description">バブルをタップしてメニュー表示：Markdown / WPSクリップ / HTMLをワンステップ。長押しでApexMarkを開く</string>
     <string name="bubble_stop">フローティングバブルを閉じる</string>
     <string name="bubble_started">フローティングバブルを開始しました</string>
     <string name="notification_channel_name">ApexMark フローティングコンバーター</string>
     <string name="notification_channel_desc">フローティングバブルサービスを維持します</string>
+    <string name="notif_tap_convert_hint">タップしてテキストを変換</string>
     <string name="notification_convert_action">今すぐ変換</string>
 
     <!-- Overlay permission -->
@@ -48,11 +47,11 @@
     <string name="theme">テーマ</string>
     <string name="quick_tools">クイックツール</string>
     <string name="start_bubble">フローティングバブルを開始</string>
-    <string name="start_bubble_desc">フローティングバブル + 通知バー変換ボタン、いつでもタップ</string>
+    <string name="start_bubble_desc">軽量ワンタップ変換：Markdown ↔ WPSクリップ ↔ HTML。通知は種類に応じて左右の短いボタン</string>
     <string name="usage_guide">使い方</string>
-    <string name="usage_step_1">上の「フローティングバブルを開始」をタップして有効にする</string>
-    <string name="usage_step_2">AIチャットツールからMarkdownテキストをコピー</string>
-    <string name="usage_step_3">フローティングバブルまたは通知バーの「変換」ボタンをタップ</string>
+    <string name="usage_step_1">「フローティングバブルを開始」をタップするか、通知の変換ボタンを使う</string>
+    <string name="usage_step_2">任意のアプリから Markdown、Web HTML、WPSリッチテキスト、またはプレーンテキストをコピー</string>
+    <string name="usage_step_3">バブルメニューまたは通知から変換を選択（Markdown ↔ WPS、HTML、Web→Markdown など）</string>
     <string name="usage_step_4">WeChat、WPS、Feishu、DingTalk に貼り付け</string>
 
     <!-- Theme -->
@@ -125,4 +124,10 @@
     <string name="confirm">確認</string>
     <string name="close">閉じる</string>
     <string name="copy">コピー</string>
+
+    <!-- About (v1.1.0) -->
+    <string name="about">について</string>
+    <string name="about_version">バージョン %1$s</string>
+    <string name="about_description">ApexMark は軽量で完全ローカルのクリップボード変換ツールです。フローティングバブルや通知からワンタップで、Markdown・WPS向けリッチクリップ・HTML を切り替え、WeChat、WPS、Feishu などへ整形貼り付け。バックグラウンドでのクリップボード監視なし、通信なし。v1.1.0 で通知UIを改善し、既定の表をニュートラルに。</string>
+    <string name="clipboard_kind_remote">クリップボードが更新されました（種類を読むには ApexMark を開いてください）</string>
 </resources>

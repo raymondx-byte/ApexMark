@@ -2,51 +2,74 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → 富文本 · 一键转换</string>
+    <string name="app_subtitle">轻点即转：Markdown ↔ WPS 剪贴板 ↔ HTML；纯文本仅合并多余空行（段落间最多保留一行空行）。</string>
 
     <!-- 转换流 -->
-    <string name="convert_clipboard">转换剪贴板</string>
-    <string name="convert_clipboard_content">Markdown → 富文本</string>
-    <string name="convert_clipboard_reverse">富文本 → Markdown</string>
-    <string name="converted_success">✓ 已转为富文本</string>
-    <string name="converted_success_with_count">✓ 富文本就绪 (%d 字)</string>
-    <string name="converted_to_markdown_with_count">✓ Markdown 就绪 (%d 字)</string>
+    <string name="clipboard_current_type_line">当前类型：%1$s</string>
+    <string name="format_conversion_disclaimer">非规范或来源杂乱的内容，可能无法完整还原版式；无法合理转换时，剪贴板仍会尽量保留原文中的可读纯文本。若当前剪贴板被识别为纯文本（非 Markdown / HTML），主界面两个并列按钮或通知栏二级菜单中的两个选项均只做「多余空行合并为段落间单行空行」并写回纯文本，不做版式转换。</string>
+    <string name="clipboard_kind_image">图片</string>
+    <string name="clipboard_image_unsupported">当前剪贴板为图片或绘图，无法转为 Markdown、WPS 或 HTML 剪贴板。请在文档中复制含文字的内容。</string>
+    <string name="convert_remote_images_stripped">已去掉 %d 个外链或非内嵌图片（剪贴板无法携带网络图片）。</string>
+    <string name="notif_open_app">打开 ApexMark</string>
+    <string name="converted_success">✓ 剪贴板已更新</string>
+    <string name="converted_success_with_count">✓ 剪贴板已更新（%d 字）</string>
+    <string name="converted_wps_with_count">✓ → WPS 剪贴板（%d 字）</string>
+    <string name="converted_html_email_with_count">✓ → HTML 剪贴板（%d 字）</string>
+    <string name="converted_to_markdown_with_count">✓ → Markdown（%d 字）</string>
     <string name="converted_chars">✓ 已转换 %d 字</string>
+    <string name="converted_plain_blank_lines_collapsed">✓ 已整理纯文本空行（%d 字）</string>
+    <string name="notif_plain_tidy_blanks">整理空行</string>
     <string name="clipboard_empty">剪贴板为空</string>
-    <string name="not_markdown">内容不像 Markdown</string>
-    <string name="not_markdown_skipped">内容不像 Markdown，已跳过</string>
-    <string name="not_html">内容不是富文本/HTML</string>
+    <string name="not_markdown">内容不像 Markdown 或 HTML</string>
+    <string name="not_markdown_skipped">内容不像 Markdown 或 HTML，已跳过</string>
+    <string name="not_html">内容不是 HTML 或可转换的标记</string>
     <string name="content_too_large">内容过大 (%sMB)</string>
     <string name="content_too_large_retry">内容过大 (%sMB)，请缩减后重试</string>
     <string name="convert_error">转换异常: %s</string>
     <string name="converting">转换中…</string>
     <string name="convert_done">转换完成</string>
-    <string name="chars_to_richtext">%d 字 → 富文本</string>
+    <string name="chars_to_richtext">%d 字 → WPS 剪贴板</string>
 
     <!-- 悬浮球 -->
     <string name="bubble_running">ApexMark 运行中</string>
-    <string name="bubble_description">点击悬浮球转换 Markdown → 富文本</string>
+    <string name="bubble_description">轻点悬浮球弹出菜单，一步完成 Markdown / WPS 剪贴板 / HTML；纯文本仅整理多余空行。长按打开主界面。</string>
     <string name="bubble_stop">关闭悬浮球</string>
     <string name="bubble_show">显示悬浮球</string>
     <string name="bubble_hide">隐藏悬浮球</string>
     <string name="bubble_started">悬浮球已启动</string>
     <string name="notification_channel_name">ApexMark 悬浮转换</string>
     <string name="notification_channel_desc">保持悬浮球转换服务运行</string>
+    <string name="notif_tap_convert_hint">点击转换文本</string>
     <string name="notification_convert_action">一键转换</string>
-    <string name="notification_md_to_html">MD → 富文本</string>
-    <string name="notification_html_to_md">富文本 → MD</string>
+    <string name="notification_md_to_html">MD → HTML</string>
+    <string name="notification_html_to_md">HTML → MD</string>
+    <string name="notif_md_wps">→ WPS</string>
+    <string name="notif_wps_text_md">→ MD</string>
+    <string name="notif_md_html">→ HTML</string>
+    <string name="notif_html_text_md">→ MD</string>
+    <string name="notif_html_wps">→ WPS</string>
+    <string name="notif_wps_md">→ MD</string>
+    <string name="notif_clipboard_to_html_email">→ HTML</string>
+    <string name="notif_wps_to_html_email">→ HTML</string>
+    <string name="notif_plain_to_md">→ MD</string>
+    <string name="clipboard_kind_markdown">MD</string>
+    <string name="clipboard_kind_html">HTML</string>
+    <string name="clipboard_kind_wps">WPS</string>
+    <string name="clipboard_kind_plain">纯文本</string>
+    <string name="clipboard_kind_remote">剪贴板有新内容 — 点下方按钮即可尝试转换（转换时会自动读取内容）</string>
+    <string name="notification_title_with_kind">ApexMark · %1$s</string>
 
     <!-- 悬浮窗权限 -->
     <string name="overlay_permission_needed">需要「显示在其他应用上」权限</string>
 
     <!-- 首次引导 -->
     <string name="onboarding_title">欢迎使用 ApexMark</string>
-    <string name="onboarding_desc">为了让你随时一键转换 Markdown，ApexMark 需要以下权限：</string>
+    <string name="onboarding_desc">为了让你随时一键转换 Markdown，ApexMark 需要以下权限。</string>
     <string name="permission_overlay_title">悬浮窗权限</string>
     <string name="permission_overlay_desc">在其他应用上方显示转换按钮，复制后一点即转。</string>
     <string name="permission_clipboard_title">剪贴板读取</string>
-    <string name="permission_clipboard_desc">读取你复制的 Markdown 文本并转换为富文本。无需额外授权。</string>
-    <string name="privacy_notice">ApexMark 仅在你主动点击时读取剪贴板，不会后台监控或上传任何数据。所有转换均在本地完成。</string>
+    <string name="permission_clipboard_desc">读取你复制的内容并写入 WPS 或 HTML 取向剪贴板。无需额外授权。</string>
+    <string name="privacy_notice">ApexMark 仅在你主动点击时读取剪贴板，不后台监控、不上传数据，转换均在本地完成。</string>
     <string name="get_started">开始使用</string>
     <string name="permission_granted">已开启</string>
     <string name="go_enable">去开启</string>
@@ -56,13 +79,14 @@
     <string name="quick_tools">快捷工具</string>
     <string name="start_bubble">启动悬浮球</string>
     <string name="stop_bubble">关闭悬浮球</string>
-    <string name="start_bubble_desc">短按 MD → 富文本，长按 富文本 → MD</string>
+    <string name="start_bubble_desc">轻点即可在 Markdown ↔ WPS 剪贴板 ↔ HTML 间转换；通知栏按检测到的类型显示左右短按钮。</string>
     <string name="stop_bubble_desc">关闭屏幕上的悬浮球</string>
     <string name="usage_guide">使用方法</string>
-    <string name="usage_step_1">点击上方「启动悬浮球」或使用通知栏按钮</string>
-    <string name="usage_step_2">从 AI 聊天工具复制 Markdown 或富文本</string>
-    <string name="usage_step_3">悬浮球短按 = MD → 富文本，长按 = 富文本 → MD</string>
+    <string name="usage_step_1">点击「启动悬浮球」或使用通知栏上的转换按钮</string>
+    <string name="usage_step_2">从任意应用复制 Markdown、网页 HTML、WPS 剪贴板内容或纯文本</string>
+    <string name="usage_step_3">在悬浮球菜单或通知栏选择需要的转换（→ WPS、→ HTML、→ MD 等）</string>
     <string name="usage_step_4">粘贴到微信、WPS、飞书、钉钉或任何编辑器</string>
+    <string name="usage_step_5">WPS/HTML 输出：纯文本槽写入渲染后的正文，避免 #、** 等 Markdown 源码污染「仅粘贴纯文本」；连续多个空行合并为单个空行。</string>
 
     <!-- 主题 -->
     <string name="appearance_settings">外观设置</string>
@@ -95,7 +119,7 @@
     <string name="back">返回</string>
     <string name="edit">编辑</string>
     <string name="preview">预览</string>
-    <string name="copy_rich_text">复制富文本</string>
+    <string name="copy_rich_text">复制 WPS 剪贴板</string>
     <string name="more">更多</string>
     <string name="export_word">导出为 Word</string>
     <string name="export_html">导出为 HTML</string>
@@ -121,7 +145,7 @@
     <string name="toolbar_task_list">任务列表</string>
 
     <!-- 导出结果 -->
-    <string name="copied_rich_text">已复制富文本到剪贴板</string>
+    <string name="copied_rich_text">已复制为 WPS 取向剪贴板</string>
     <string name="export_html_success">HTML 导出成功</string>
     <string name="export_html_error">HTML 导出失败: %s</string>
     <string name="export_word_success">Word 导出成功</string>
@@ -138,7 +162,7 @@
     <!-- 关于 -->
     <string name="about">关于</string>
     <string name="about_version">版本 %1$s</string>
-    <string name="about_description">ApexMark 是一款极轻量、低资源占用的系统级 Markdown ↔ 富文本双向转换工具，专为移动办公而生。从任意 App 复制 Markdown 一点即转，粘贴到微信、WPS、飞书、钉钉、邮件即为格式完整的富文本；长按则反向把富文本转回 Markdown。小体积、零后台轮询、零网络请求，所有转换均在本地完成。</string>
+    <string name="about_description">ApexMark 是面向移动办公的本地剪贴板格式转换工具：借助悬浮球与通知栏，在 Markdown、WPS 剪贴板与 HTML 之间快速切换，便于贴入微信、WPS、飞书等。无后台监听剪贴板、零网络。1.1.0 优化通知与默认表格线框。转为 WPS 或邮件向 HTML 时，Plain 槽为渲染正文，剔除 Markdown 符号对纯文本粘贴的污染；连续三个及以上换行压缩为一段间的一个空行。非规范或杂乱来源可能无法完整还原富文本，仍会尽量保留可读纯文本。</string>
     <string name="about_repository">源码仓库</string>
     <string name="about_contact">联系作者 / 商业授权</string>
     <string name="about_license">开源协议</string>

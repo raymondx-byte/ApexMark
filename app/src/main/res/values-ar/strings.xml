@@ -2,11 +2,9 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → نص منسق · تحويل بنقرة واحدة</string>
+    <string name="app_subtitle">لمسة واحدة: Markdown ↔ حافظة WPS ↔ HTML — لصق بتنسيق أنظف وأسرع</string>
 
     <!-- Convert flow -->
-    <string name="convert_clipboard">تحويل الحافظة</string>
-    <string name="convert_clipboard_content">تحويل محتوى الحافظة</string>
     <string name="converted_success">✓ تم التحويل إلى تنسيق Word</string>
     <string name="converted_success_with_count">✓ تم التحويل إلى تنسيق Word (%d حرف)</string>
     <string name="converted_chars">✓ تم تحويل %d حرف</string>
@@ -22,11 +20,12 @@
 
     <!-- Floating bubble -->
     <string name="bubble_running">ApexMark قيد التشغيل</string>
-    <string name="bubble_description">انقر على الفقاعة العائمة لتحويل Markdown → نص منسق</string>
+    <string name="bubble_description">انقر الفقاعة للقائمة: Markdown أو حافظة WPS أو HTML في خطوة؛ الضغط المطوّل يفتح ApexMark</string>
     <string name="bubble_stop">إغلاق الفقاعة العائمة</string>
     <string name="bubble_started">تم تشغيل الفقاعة العائمة</string>
     <string name="notification_channel_name">محوّل ApexMark العائم</string>
     <string name="notification_channel_desc">يبقي خدمة الفقاعة العائمة قيد التشغيل</string>
+    <string name="notif_tap_convert_hint">اضغط لتحويل النص</string>
     <string name="notification_convert_action">تحويل الآن</string>
 
     <!-- Overlay permission -->
@@ -48,11 +47,11 @@
     <string name="theme">المظهر</string>
     <string name="quick_tools">أدوات سريعة</string>
     <string name="start_bubble">تشغيل الفقاعة العائمة</string>
-    <string name="start_bubble_desc">الفقاعة العائمة + زر التحويل في شريط الإشعارات، متاح في أي وقت</string>
+    <string name="start_bubble_desc">تحويل خفيف بلمسة: Markdown ↔ حافظة WPS ↔ HTML؛ الإشعار يعرض زرّين قصيرين في كل صف</string>
     <string name="usage_guide">كيفية الاستخدام</string>
-    <string name="usage_step_1">انقر على \"تشغيل الفقاعة العائمة\" أعلاه للتفعيل</string>
-    <string name="usage_step_2">انسخ نص Markdown من أدوات الدردشة الذكية</string>
-    <string name="usage_step_3">انقر على الفقاعة أو زر \"تحويل\" في شريط الإشعارات</string>
+    <string name="usage_step_1">انقر \"تشغيل الفقاعة العائمة\" أو استخدم إجراءات الإشعار</string>
+    <string name="usage_step_2">انسخ Markdown أو HTML من الويب أو نص WPS المنسق أو نصاً عادياً من أي تطبيق</string>
+    <string name="usage_step_3">اختر التحويل من قائمة الفقاعة أو الإشعار (Markdown ↔ WPS، HTML، ويب → Markdown، إلخ)</string>
     <string name="usage_step_4">الصق في WeChat, WPS, Feishu, DingTalk</string>
 
     <!-- Theme -->
@@ -125,4 +124,10 @@
     <string name="confirm">تأكيد</string>
     <string name="close">إغلاق</string>
     <string name="copy">نسخ</string>
+
+    <!-- About (v1.1.0) -->
+    <string name="about">حول</string>
+    <string name="about_version">الإصدار %1$s</string>
+    <string name="about_description">ApexMark محوّل حافظة خفيف ويعمل بالكامل على الجهاز: لمسة من الفقاعة أو الإشعار للتبديل بين Markdown وحافظة WPS الغنية وHTML، للصق الجداول والأنماط في WeChat وWPS وFeishu وغيرها. دون قراءة الحافظة في الخلفية ودون شبكة. الإصدار 1.1.0 يبسط الإشعار ويبقي الجداول الافتراضية محايدة.</string>
+    <string name="clipboard_kind_remote">تم تحديث الحافظة (افتح ApexMark لقراءة النوع)</string>
 </resources>

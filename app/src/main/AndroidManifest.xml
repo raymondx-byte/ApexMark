@@ -61,6 +61,24 @@
             android:taskAffinity=":apexmark.bridge"
             android:theme="@style/Theme.Transparent" />
 
+        <activity
+            android:name=".service.NotificationMenuActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=":apexmark.bridge"
+            android:theme="@style/Theme.NotificationMenu" />
+
+        <!-- 悬浮球：取焦后判型再弹菜单（须注册，否则 startActivity 静默失败） -->
+        <activity
+            android:name=".service.ClipboardPeekActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=":apexmark.bridge"
+            android:theme="@style/Theme.NotificationMenu" />
+
         <!-- ═══ 悬浮球前台 Service ═══ -->
         <service
             android:name=".service.FloatingPortalService"

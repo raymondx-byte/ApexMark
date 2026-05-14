@@ -2,51 +2,74 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → Rich Text · One-tap Convert</string>
+    <string name="app_subtitle">One tap: Markdown ↔ WPS clipboard ↔ HTML; plain text only merges extra blank lines into one between paragraphs.</string>
 
     <!-- Convert flow -->
-    <string name="convert_clipboard">Convert Clipboard</string>
-    <string name="convert_clipboard_content">Markdown → Rich Text</string>
-    <string name="convert_clipboard_reverse">Rich Text → Markdown</string>
-    <string name="converted_success">✓ Converted to rich text</string>
-    <string name="converted_success_with_count">✓ Rich text ready (%d chars)</string>
-    <string name="converted_to_markdown_with_count">✓ Markdown ready (%d chars)</string>
+    <string name="clipboard_current_type_line">Current type: %1$s</string>
+    <string name="format_conversion_disclaimer">Informal or non-standard clipboard content may not convert with full layout fidelity; readable plain text from the source is still preserved on the clipboard when a faithful styled pass is not possible. When the clip is detected as plain text only (not Markdown or HTML), both options on the main screen or in the notification’s secondary menu only collapse runs of blank lines to a single blank line between paragraphs and write plain text back—no format conversion.</string>
+    <string name="clipboard_kind_image">Image</string>
+    <string name="clipboard_image_unsupported">Clipboard is image-only or drawing; cannot convert to Markdown, WPS, or HTML clipboard. Copy content that includes text from your document.</string>
+    <string name="convert_remote_images_stripped">Removed %d non-embedded images (remote images cannot be carried on the clipboard).</string>
+    <string name="notif_open_app">Open ApexMark</string>
+    <string name="converted_success">✓ Clipboard updated</string>
+    <string name="converted_success_with_count">✓ Clipboard updated (%d chars)</string>
+    <string name="converted_wps_with_count">✓ → WPS clipboard (%d chars)</string>
+    <string name="converted_html_email_with_count">✓ → HTML clipboard (%d chars)</string>
+    <string name="converted_to_markdown_with_count">✓ → Markdown (%d chars)</string>
     <string name="converted_chars">✓ Converted %d chars</string>
+    <string name="converted_plain_blank_lines_collapsed">✓ Plain text tidied (%d chars)</string>
+    <string name="notif_plain_tidy_blanks">Tidy blank lines</string>
     <string name="clipboard_empty">Clipboard is empty</string>
-    <string name="not_markdown">Content doesn\'t look like Markdown</string>
-    <string name="not_markdown_skipped">Content doesn\'t look like Markdown, skipped</string>
-    <string name="not_html">Content doesn\'t contain rich text</string>
+    <string name="not_markdown">Content doesn\'t look like Markdown or HTML</string>
+    <string name="not_markdown_skipped">Content doesn\'t look like Markdown or HTML, skipped</string>
+    <string name="not_html">Content isn\'t HTML or convertible markup</string>
     <string name="content_too_large">Content too large (%s MB)</string>
     <string name="content_too_large_retry">Content too large (%s MB), please reduce and retry</string>
     <string name="convert_error">Conversion error: %s</string>
     <string name="converting">Converting…</string>
     <string name="convert_done">Conversion Complete</string>
-    <string name="chars_to_richtext">%d chars → Rich Text</string>
+    <string name="chars_to_richtext">%d chars → WPS clipboard</string>
 
     <!-- Floating bubble -->
     <string name="bubble_running">ApexMark Running</string>
-    <string name="bubble_description">Tap bubble to convert Markdown → Rich Text</string>
+    <string name="bubble_description">Tap the bubble for Markdown, WPS clipboard, or HTML in one step; plain text clips only tidy extra blank lines. Long-press opens ApexMark.</string>
     <string name="bubble_stop">Close Bubble</string>
     <string name="bubble_show">Show Bubble</string>
     <string name="bubble_hide">Hide Bubble</string>
     <string name="bubble_started">Bubble started</string>
     <string name="notification_channel_name">ApexMark Floating Converter</string>
     <string name="notification_channel_desc">Keeps the floating bubble service running</string>
+    <string name="notif_tap_convert_hint">Tap to convert text</string>
     <string name="notification_convert_action">Convert Now</string>
-    <string name="notification_md_to_html">MD → Rich</string>
-    <string name="notification_html_to_md">Rich → MD</string>
+    <string name="notification_md_to_html">MD → HTML</string>
+    <string name="notification_html_to_md">HTML → MD</string>
+    <string name="notif_md_wps">→ WPS</string>
+    <string name="notif_wps_text_md">→ MD</string>
+    <string name="notif_md_html">→ HTML</string>
+    <string name="notif_html_text_md">→ MD</string>
+    <string name="notif_html_wps">→ WPS</string>
+    <string name="notif_wps_md">→ MD</string>
+    <string name="notif_clipboard_to_html_email">→ HTML</string>
+    <string name="notif_wps_to_html_email">→ HTML</string>
+    <string name="notif_plain_to_md">→ MD</string>
+    <string name="clipboard_kind_markdown">Markdown</string>
+    <string name="clipboard_kind_html">HTML</string>
+    <string name="clipboard_kind_wps">WPS</string>
+    <string name="clipboard_kind_plain">Plain text</string>
+    <string name="clipboard_kind_remote">New clip · tap below to convert</string>
+    <string name="notification_title_with_kind">ApexMark · %1$s</string>
 
     <!-- Overlay permission -->
     <string name="overlay_permission_needed">\"Display over other apps\" permission required</string>
 
     <!-- Onboarding -->
     <string name="onboarding_title">Welcome to ApexMark</string>
-    <string name="onboarding_desc">To enable one-tap Markdown conversion anytime, ApexMark needs the following permissions:</string>
+    <string name="onboarding_desc">To enable one-tap Markdown conversion anytime, ApexMark needs the following permissions.</string>
     <string name="permission_overlay_title">Overlay Permission</string>
     <string name="permission_overlay_desc">Show a convert button over other apps, tap to convert after copying.</string>
     <string name="permission_clipboard_title">Clipboard Access</string>
-    <string name="permission_clipboard_desc">Read your copied Markdown text and convert to rich text. No extra permission needed.</string>
-    <string name="privacy_notice">ApexMark only reads the clipboard when you tap. No background monitoring or data upload. All conversion is done locally.</string>
+    <string name="permission_clipboard_desc">Read what you copied and write WPS- or HTML-style clipboard payloads. No extra permission required.</string>
+    <string name="privacy_notice">ApexMark reads the clipboard only when you tap. No background monitoring or uploads; all conversion runs on-device.</string>
     <string name="get_started">Get Started</string>
     <string name="permission_granted">Enabled</string>
     <string name="go_enable">Enable</string>
@@ -56,13 +79,14 @@
     <string name="quick_tools">Quick Tools</string>
     <string name="start_bubble">Start Floating Bubble</string>
     <string name="stop_bubble">Stop Floating Bubble</string>
-    <string name="start_bubble_desc">Tap to convert · long-press to reverse (Rich → MD)</string>
+    <string name="start_bubble_desc">Tap to convert Markdown ↔ WPS clipboard ↔ HTML; the notification shows two short actions per row for the detected clip type.</string>
     <string name="stop_bubble_desc">Close the on-screen floating bubble</string>
     <string name="usage_guide">How to Use</string>
-    <string name="usage_step_1">Tap \"Start Floating Bubble\" above, or use the notification bar buttons</string>
-    <string name="usage_step_2">Copy Markdown text from AI chat tools</string>
-    <string name="usage_step_3">Short-press bubble = MD → Rich · Long-press = Rich → MD</string>
+    <string name="usage_step_1">Tap \"Start Floating Bubble\" or use the notification actions</string>
+    <string name="usage_step_2">Copy Markdown, web HTML, WPS clip, or plain text from any app</string>
+    <string name="usage_step_3">Pick a conversion from the bubble menu or notification (→ WPS, → HTML, → MD, and more)</string>
     <string name="usage_step_4">Paste into WeChat, WPS, Feishu, DingTalk, or any editor</string>
+    <string name="usage_step_5">WPS/HTML outputs use a plain-text MIME with rendered body text—no Markdown marker clutter on text-only paste. Runs of multiple blank lines collapse to a single blank line.</string>
 
     <!-- Theme -->
     <string name="appearance_settings">Appearance</string>
@@ -95,7 +119,7 @@
     <string name="back">Back</string>
     <string name="edit">Edit</string>
     <string name="preview">Preview</string>
-    <string name="copy_rich_text">Copy Rich Text</string>
+    <string name="copy_rich_text">Copy WPS clipboard</string>
     <string name="more">More</string>
     <string name="export_word">Export as Word</string>
     <string name="export_html">Export as HTML</string>
@@ -121,7 +145,7 @@
     <string name="toolbar_task_list">Task List</string>
 
     <!-- Export results -->
-    <string name="copied_rich_text">Rich text copied to clipboard</string>
+    <string name="copied_rich_text">WPS-style clipboard copied</string>
     <string name="export_html_success">HTML export successful</string>
     <string name="export_html_error">HTML export failed: %s</string>
     <string name="export_word_success">Word export successful</string>
@@ -138,7 +162,7 @@
     <!-- About -->
     <string name="about">About</string>
     <string name="about_version">Version %1$s</string>
-    <string name="about_description">ApexMark is a featherweight, system-level Markdown ↔ Rich Text converter built for mobile productivity. Copy Markdown anywhere, tap once, paste fully-formatted rich text into WeChat, WPS, Feishu, DingTalk, email, or any editor — and long-press to convert in the opposite direction. Small footprint, zero background polling, zero network. All conversion happens locally on your device.</string>
+    <string name="about_description">ApexMark is a lightweight, fully local clipboard converter: one tap from the bubble or notification switches Markdown, WPS clipboard, and HTML for pasting into WeChat, WPS, Feishu, browsers, and more. No background clipboard monitoring, no network. v1.1.0 streamlines notifications and keeps default tables neutral. WPS- and HTML-oriented writes put rendered body text in the plain-text slot so paste-as-text stays free of Markdown syntax noise; three or more consecutive newlines collapse to one paragraph break (one blank line). Informal or messy sources may not preserve full rich layout—readable plain text is still kept when a faithful conversion is not possible.</string>
     <string name="about_repository">Source Repository</string>
     <string name="about_repo_url" translatable="false">https://github.com/raymondx-byte/ApexMark</string>
     <string name="about_contact">Contact / Commercial License</string>

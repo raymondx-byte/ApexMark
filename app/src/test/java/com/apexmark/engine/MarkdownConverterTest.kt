@@ -20,7 +20,7 @@ class MarkdownConverterTest {
     }
 
     // ═══════════════════════════════════════════
-    //  表格：微信粘贴时不丢框线
+    //  表格：微信粘贴时不丢框线（分隔行须至少 `---`，`| - |` 不会被 Flexmark 识别为表格）
     // ═══════════════════════════════════════════
 
     @Test
@@ -43,7 +43,7 @@ class MarkdownConverterTest {
     fun `table cells have inline border style`() {
         val md = """
             | A | B |
-            | - | - |
+            | --- | --- |
             | 1 | 2 |
         """.trimIndent()
 
@@ -56,7 +56,7 @@ class MarkdownConverterTest {
     }
 
     @Test
-    fun `table header has background color`() {
+    fun `table header uses neutral transparent style`() {
         val md = """
             | 列1 | 列2 |
             | --- | --- |
@@ -65,17 +65,17 @@ class MarkdownConverterTest {
 
         val html = converter.toInlineStyledHtml(md)
 
-        assertTrue("th must have background color",
-            html.contains("background:#1a73e8"))
-        assertTrue("th must have white text",
-            html.contains("color:#fff"))
+        assertTrue("th should not force blue header fill",
+            html.contains("background:transparent") && html.contains("<th style="))
+        assertTrue("th text should be dark on transparent",
+            html.contains("color:#000000"))
     }
 
     @Test
     fun `table rows have inline border`() {
         val md = """
             | X | Y |
-            | - | - |
+            | --- | --- |
             | a | b |
         """.trimIndent()
 
@@ -97,9 +97,9 @@ class MarkdownConverterTest {
 
         val html = converter.toInlineStyledHtml(md)
 
-        assertTrue("h1 must have blue color", html.contains("color:#1a73e8"))
-        assertTrue("h2 must have dark blue color", html.contains("color:#1557b0"))
-        assertTrue("h3 must have accent blue color", html.contains("color:#185abc"))
+        assertTrue("h1 must have theme blue", html.contains("color:#1566c8"))
+        assertTrue("h2 must have dark blue", html.contains("color:#0050b0"))
+        assertTrue("h3 must have deeper blue", html.contains("color:#003e90"))
     }
 
     @Test
@@ -146,7 +146,7 @@ class MarkdownConverterTest {
         val md = "使用 `println()` 打印"
         val html = converter.toInlineStyledHtml(md)
         assertTrue("inline code must have background",
-            html.contains("background:#f1f3f4"))
+            html.contains("background:#f1f3f5"))
     }
 
     @Test
@@ -159,7 +159,7 @@ class MarkdownConverterTest {
 
         val html = converter.toInlineStyledHtml(md)
         assertTrue("pre must have background",
-            html.contains("<pre style=") && html.contains("background:#f5f5f5"))
+            html.contains("<pre style=") && html.contains("background:#f1f3f5"))
     }
 
     // ═══════════════════════════════════════════
@@ -171,7 +171,7 @@ class MarkdownConverterTest {
         val md = "> 这是一段引用"
         val html = converter.toInlineStyledHtml(md)
         assertTrue("blockquote must have border-left",
-            html.contains("border-left:4px solid #1a73e8"))
+            html.contains("border-left:4px solid #1566c8"))
     }
 
     // ═══════════════════════════════════════════
@@ -203,7 +203,7 @@ class MarkdownConverterTest {
         val md = "[Google](https://google.com)"
         val html = converter.toInlineStyledHtml(md)
         assertTrue("link must have inline color",
-            html.contains("color:#1a73e8"))
+            html.contains("color:#1566c8"))
     }
 
     @Test
@@ -219,12 +219,44 @@ class MarkdownConverterTest {
     // ═══════════════════════════════════════════
 
     @Test
-    fun `convertText returns both plain and html`() {
+    fun `convertText returns styled html for markdown`() {
         val md = "# Hello\n\n**bold** text"
         val (plain, html) = converter.convertText(md)
-        assertEquals("plain text preserved", md, plain)
+        assertTrue(plain.isNotBlank())
         assertTrue("html contains styled h1", html.contains("<h1 style="))
         assertTrue("html contains bold", html.contains("<strong style="))
+    }
+
+    @Test
+    fun `convertText converts simple html through pipeline`() {
+        val (plain, html) = converter.convertText("<p>Hello <strong>world</strong></p>")
+        assertTrue(html.isNotBlank())
+        assertTrue("has inline styles", html.contains("style="))
+    }
+
+    @Test
+    fun `convertText returns empty html for plain non md non html`() {
+        val (_, html) = converter.convertText("just plain words")
+        assertEquals("", html)
+    }
+
+    @Test
+    fun `clipboard html wrapper produces full document for fragments`() {
+        val fragment = """<p style="margin:0;">Hi</p>"""
+        val doc = converter.wrapClipboardHtmlDocument(fragment)
+        assertTrue(doc.contains("<!DOCTYPE html>", ignoreCase = true))
+        assertTrue(doc.contains("http-equiv", ignoreCase = true))
+        assertTrue(doc.contains("text/html", ignoreCase = true))
+        assertTrue(doc.contains("""<meta charset="utf-8">"""))
+        assertTrue(doc.contains("body style="))
+        assertTrue(doc.contains(MarkdownConverter.CLIPBOARD_BODY_STYLE))
+        assertTrue(doc.contains(fragment))
+    }
+
+    @Test
+    fun `clipboard html wrapper leaves existing documents unchanged`() {
+        val already = "<!DOCTYPE html><html><body><p>x</p></body></html>"
+        assertEquals(already, converter.wrapClipboardHtmlDocument(already))
     }
 
     // ═══════════════════════════════════════════
@@ -281,7 +313,7 @@ class MarkdownConverterTest {
         assertTrue("table border attr", html.contains("border=\"1\""))
         assertTrue("table cellpadding attr", html.contains("cellpadding=\"5\""))
         assertTrue("td border style", html.contains("border:1px solid"))
-        assertTrue("th background", html.contains("background:#1a73e8"))
+        assertTrue("th neutral background", html.contains("background:transparent"))
 
         // 所有标签必须有内联样式
         assertTrue("h1 styled", html.contains("<h1 style="))
@@ -311,18 +343,26 @@ class MarkdownConverterTest {
 
     @Test
     fun `ConvertResult sealed class covers all variants`() {
-        val success: ConvertResult = ConvertResult.Success(100)
+        val success: ConvertResult = ConvertResult.Success(100, hint = "hint")
         val empty: ConvertResult = ConvertResult.Empty
         val notMd: ConvertResult = ConvertResult.NotMarkdown
+        val notHtml: ConvertResult = ConvertResult.NotHtml
+        val imgUn: ConvertResult = ConvertResult.ClipboardImageUnsupported
         val tooLarge: ConvertResult = ConvertResult.TooLarge("2.5")
         val error: ConvertResult = ConvertResult.Error("timeout")
+        val plainLines: ConvertResult = ConvertResult.PlainBlankLinesCollapsed(42)
 
         assertTrue(success is ConvertResult.Success)
+        assertEquals("hint", (success as ConvertResult.Success).hint)
         assertTrue(empty is ConvertResult.Empty)
         assertTrue(notMd is ConvertResult.NotMarkdown)
+        assertTrue(notHtml is ConvertResult.NotHtml)
+        assertTrue(imgUn is ConvertResult.ClipboardImageUnsupported)
         assertTrue(tooLarge is ConvertResult.TooLarge)
         assertEquals("2.5", (tooLarge as ConvertResult.TooLarge).sizeMb)
         assertEquals("timeout", (error as ConvertResult.Error).message)
+        assertTrue(plainLines is ConvertResult.PlainBlankLinesCollapsed)
+        assertEquals(42, (plainLines as ConvertResult.PlainBlankLinesCollapsed).charCount)
     }
 
     @Test
@@ -338,7 +378,7 @@ class MarkdownConverterTest {
     fun `all tr elements have inline style`() {
         val md = """
             | A | B |
-            | - | - |
+            | --- | --- |
             | 1 | 2 |
             | 3 | 4 |
         """.trimIndent()
@@ -349,14 +389,48 @@ class MarkdownConverterTest {
     }
 
     @Test
-    fun `td cells have white background for WeChat transparency defense`() {
+    fun `td cells use transparent background by default`() {
         val md = """
             | X | Y |
-            | - | - |
+            | --- | --- |
             | a | b |
         """.trimIndent()
 
         val html = converter.toInlineStyledHtml(md)
-        assertTrue("td must have background:#fff", html.contains("background:#fff"))
+        assertTrue(
+            "td should use transparent cell fill",
+            Regex("""<td style="[^"]*background:transparent""", RegexOption.IGNORE_CASE).containsMatchIn(html)
+        )
+    }
+
+    /** Gmail/WPS 对「table 下直接 th」会整条降级为纯文本；须保证 tr 包裹。 */
+    @Test
+    fun `Chinese sample doc table has no th directly under table or bare thead`() {
+        val md = """
+            # 示例文档
+
+            这是一个简单的 Markdown 示例。
+
+            ## 常见水果营养简表
+
+            | 水果名称 | 热量 (kcal/100g) | 主要营养素 | 推荐季节 |
+            | --- | --- | --- | --- |
+            | 苹果 | 52 | 纤维素、维生素C | 四季 |
+            | 香蕉 | 89 | 钾、维生素B6 | 四季 |
+
+            ## 结语
+
+            Markdown 格式非常适合用于快速记录笔记。
+        """.trimIndent()
+
+        val html = converter.toInlineStyledHtml(md)
+        assertFalse(
+            "th must not be direct child of table",
+            Regex("""<table[^>]*>\s*<th\b""", RegexOption.IGNORE_CASE).containsMatchIn(html)
+        )
+        assertFalse(
+            "th must not sit directly under thead without tr",
+            Regex("""<thead[^>]*>\s*<th\b""", RegexOption.IGNORE_CASE).containsMatchIn(html)
+        )
     }
 }

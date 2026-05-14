@@ -6,7 +6,7 @@ package com.apexmark.engine
  * 核心策略：把所有样式直接写进 style="" 属性，
  * 因为微信、WPS、钉钉等第三方 App 不会加载 <style> 块。
  *
- * 表格强制加 border="1" cellpadding="5" 确保移动端 Word 可见框线。
+ * 表格强制加 border="1" cellpadding="5" 确保移动端 Word 可见框线；默认无彩色表头填充（透明底 + 深色线框）。
  */
 class StyleStyler {
 
@@ -42,17 +42,20 @@ class StyleStyler {
         html = html.replace("<ol>", """<ol style="$OL_STYLE">""")
         html = html.replace("<li>", """<li style="$LI_STYLE">""")
 
+        // 先修 `<table><th` 再扩写 table 标签，否则 `[^>]*` 过长时与「在 table 后插 thead/tr」逻辑难配合
+        html = repairLooseTableCells(html)
         // 微信 / WPS / 钉钉的富文本输入框不解析 CSS border 等属性，必须用 HTML 原生属性
         html = html.replace(Regex("""<table[^>]*>"""),
             """<table border="1" cellpadding="5" cellspacing="0" style="$TABLE_STYLE">""")
         html = html.replace(Regex("""<thead[^>]*>"""), "<thead>")
         html = html.replace(Regex("""<tbody[^>]*>"""), "<tbody>")
-        html = html.replace(Regex("""<tr[^>]*>"""), """<tr style="$TR_STYLE">""")
-        html = html.replace(Regex("""<th[^>]*>"""), """<th style="$TH_STYLE">""")
-        html = html.replace(Regex("""<td[^>]*>"""), """<td style="$TD_STYLE">""")
+        // 须用 `<th\\b`，否则 `<thead>` 会被当成 `<th…>` 整块替换，表头行会碎成「table 下直接 th」
+        html = html.replace(Regex("""<tr\b[^>]*>"""), """<tr style="$TR_STYLE">""")
+        html = html.replace(Regex("""<th\b[^>]*>"""), """<th style="$TH_STYLE">""")
+        html = html.replace(Regex("""<td\b[^>]*>"""), """<td style="$TD_STYLE">""")
 
         html = html.replace(Regex("""<a\s+href="""),
-            """<a style="color:#1a73e8;text-decoration:none;" href=""")
+            """<a style="color:#1566c8;text-decoration:none;" href=""")
 
         html = html.replace(Regex("""<hr\s*/?>"""),
             """<hr style="border:none;border-top:2px solid #e0e0e0;margin:16px 0;"/>""")
@@ -61,6 +64,61 @@ class StyleStyler {
             """<img style="max-width:100%;height:auto;border-radius:6px;" """)
 
         return html
+    }
+
+    /**
+     * html→md→html 等路径可能产生 `<table><th` 或 `<thead><th` 缺少 `<tr>`，WPS 会拒粘并卡住。
+     * 用索引插入，避免 `String.replace(Regex)` 与 `$1$2` 转义问题。
+     */
+    private fun repairLooseTableCells(html: String): String {
+        var s = html
+        val tableOpen = Regex("""<table[^>]*>""", RegexOption.IGNORE_CASE)
+        var searchFrom = 0
+        while (true) {
+            val m = tableOpen.find(s, searchFrom) ?: break
+            val afterGt = m.range.last + 1
+            if (afterGt >= s.length) break
+            val tail = s.substring(afterGt)
+            val wsLen = tail.takeWhile { it.isWhitespace() }.length
+            val slice = tail.drop(wsLen)
+            // 不能用 startsWith("<th")：会与 `<thead>` 误判混淆
+            if (!Regex("""^<th\b""", RegexOption.IGNORE_CASE).containsMatchIn(slice)) {
+                searchFrom = afterGt
+                continue
+            }
+            val insertPos = afterGt + wsLen
+            val insert = "<thead><tr>"
+            s = s.substring(0, insertPos) + insert + s.substring(insertPos)
+            searchFrom = insertPos + insert.length
+        }
+        s = Regex("""(<thead\s*>)(\s*)<th\b""", RegexOption.IGNORE_CASE).replace(s) { mr ->
+            "${mr.groupValues[1]}${mr.groupValues[2]}<tr><th"
+        }
+        s = Regex("""(<tbody\s*>)(\s*)<th\b""", RegexOption.IGNORE_CASE).replace(s) { mr ->
+            "${mr.groupValues[1]}${mr.groupValues[2]}<tr><th"
+        }
+        s = Regex("""(<tbody\s*>)(\s*)<td\b""", RegexOption.IGNORE_CASE).replace(s) { mr ->
+            "${mr.groupValues[1]}${mr.groupValues[2]}<tr><td"
+        }
+        return s
+    }
+
+    /** 纯文本包一层带样式的段落，供「剪贴板 → HTML」等路径使用。 */
+    fun styledPlainParagraph(plain: String): String {
+        val esc = escapeXmlText(plain)
+        return """<p style="$P_STYLE">$esc</p>"""
+    }
+
+    private fun escapeXmlText(s: String): String = buildString(s.length + 8) {
+        for (ch in s) {
+            when (ch) {
+                '&' -> append("&amp;")
+                '<' -> append("&lt;")
+                '>' -> append("&gt;")
+                '"' -> append("&quot;")
+                else -> append(ch)
+            }
+        }
     }
 
     companion object {
@@ -87,8 +145,8 @@ class StyleStyler {
         const val LI_STYLE = "${FONT_STACK}font-size:14px;line-height:1.6;margin:3px 0;color:#212529;"
 
         const val TABLE_STYLE = "border-collapse:collapse;width:100%;margin:10px 0;${FONT_STACK}font-size:13px;"
-        const val TR_STYLE = "border:1px solid #ced4da;"
-        const val TH_STYLE = "background:#1566c8;color:#fff;padding:8px 10px;text-align:left;font-weight:600;border:1px solid #0050b0;"
-        const val TD_STYLE = "padding:6px 10px;border:1px solid #ced4da;color:#212529;background:#fff;"
+        const val TR_STYLE = "border:1px solid #000000;"
+        const val TH_STYLE = "background:transparent;color:#000000;padding:8px 10px;text-align:left;font-weight:600;border:1px solid #000000;"
+        const val TD_STYLE = "padding:6px 10px;border:1px solid #000000;color:#000000;background:transparent;"
     }
 }

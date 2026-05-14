@@ -2,11 +2,9 @@
 <resources>
     <!-- Приложение -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → форматированный текст · Конвертация в одно касание</string>
+    <string name="app_subtitle">Одно касание: Markdown ↔ буфер WPS ↔ HTML — быстрее вставляйте с форматированием</string>
 
     <!-- Конвертация -->
-    <string name="convert_clipboard">Конвертировать буфер обмена</string>
-    <string name="convert_clipboard_content">Конвертировать содержимое буфера обмена</string>
     <string name="converted_success">✓ Конвертировано в формат Word</string>
     <string name="converted_success_with_count">✓ Конвертировано в формат Word (%d симв.)</string>
     <string name="converted_chars">✓ Конвертировано %d симв.</string>
@@ -22,11 +20,12 @@
 
     <!-- Плавающая кнопка -->
     <string name="bubble_running">ApexMark работает</string>
-    <string name="bubble_description">Нажмите на плавающую кнопку для конвертации Markdown → форматированный текст</string>
+    <string name="bubble_description">Нажмите пузырь для меню: Markdown, буфер WPS или HTML письма за шаг; долгое нажатие открывает ApexMark</string>
     <string name="bubble_stop">Закрыть плавающую кнопку</string>
     <string name="bubble_started">Плавающая кнопка запущена</string>
     <string name="notification_channel_name">ApexMark Плавающий конвертер</string>
     <string name="notification_channel_desc">Поддерживает работу плавающей кнопки</string>
+    <string name="notif_tap_convert_hint">Нажмите, чтобы преобразовать текст</string>
     <string name="notification_convert_action">Конвертировать</string>
 
     <!-- Разрешение на наложение -->
@@ -48,11 +47,11 @@
     <string name="theme">Тема</string>
     <string name="quick_tools">Быстрые инструменты</string>
     <string name="start_bubble">Запустить плавающую кнопку</string>
-    <string name="start_bubble_desc">Плавающая кнопка + кнопка «Конвертировать» в панели уведомлений, доступна в любое время</string>
+    <string name="start_bubble_desc">Лёгкое касание: Markdown ↔ буфер WPS ↔ HTML; в уведомлении две короткие кнопки в ряд</string>
     <string name="usage_guide">Как пользоваться</string>
-    <string name="usage_step_1">Нажмите «Запустить плавающую кнопку» выше для активации</string>
-    <string name="usage_step_2">Скопируйте текст Markdown из AI-чата</string>
-    <string name="usage_step_3">Нажмите на плавающую кнопку или кнопку «Конвертировать» в панели уведомлений</string>
+    <string name="usage_step_1">Нажмите «Запустить плавающую кнопку» или действия в уведомлении</string>
+    <string name="usage_step_2">Скопируйте Markdown, веб-HTML, форматированный текст WPS или обычный текст из любого приложения</string>
+    <string name="usage_step_3">Выберите конвертацию в меню пузыря или уведомлении (Markdown ↔ WPS, HTML, веб → Markdown и т.д.)</string>
     <string name="usage_step_4">Вставьте в WeChat, WPS, Feishu, DingTalk</string>
 
     <!-- Тема -->
@@ -125,4 +124,10 @@
     <string name="confirm">Подтвердить</string>
     <string name="close">Закрыть</string>
     <string name="copy">Копировать</string>
+
+    <!-- About (v1.1.0) -->
+    <string name="about">О приложении</string>
+    <string name="about_version">Версия %1$s</string>
+    <string name="about_description">ApexMark — лёгкий полностью локальный конвертер буфера обмена: одно касание в пузыре или уведомлении переключает Markdown, rich-clip в стиле WPS и HTML, чтобы вставлять таблицы и стили в WeChat, WPS, Feishu и др. Без фонового чтения буфера, без сети. Версия 1.1.0 упрощает уведомление и оставляет таблицы по умолчанию нейтральными.</string>
+    <string name="clipboard_kind_remote">Буфер обмена обновлён (откройте ApexMark, чтобы прочитать тип)</string>
 </resources>

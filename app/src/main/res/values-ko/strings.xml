@@ -2,11 +2,9 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → 서식 있는 텍스트 · 원탭 변환</string>
+    <string name="app_subtitle">원탭: Markdown ↔ WPS 클립 ↔ HTML — 깔끔하게 빠르게 붙여넣기</string>
 
     <!-- Convert flow -->
-    <string name="convert_clipboard">클립보드 변환</string>
-    <string name="convert_clipboard_content">클립보드 내용 변환</string>
     <string name="converted_success">✓ Word 형식으로 변환됨</string>
     <string name="converted_success_with_count">✓ Word 형식으로 변환됨 (%d자)</string>
     <string name="converted_chars">✓ %d자 변환됨</string>
@@ -22,11 +20,12 @@
 
     <!-- Floating bubble -->
     <string name="bubble_running">ApexMark 실행 중</string>
-    <string name="bubble_description">플로팅 버블을 탭하여 Markdown → 서식 있는 텍스트로 변환</string>
+    <string name="bubble_description">버블을 탭해 메뉴: Markdown, WPS 클립, HTML 한 번에. 길게 눌러 ApexMark 열기</string>
     <string name="bubble_stop">플로팅 버블 닫기</string>
     <string name="bubble_started">플로팅 버블 시작됨</string>
     <string name="notification_channel_name">ApexMark 플로팅 변환기</string>
     <string name="notification_channel_desc">플로팅 버블 서비스를 유지합니다</string>
+    <string name="notif_tap_convert_hint">탭하여 텍스트 변환</string>
     <string name="notification_convert_action">지금 변환</string>
 
     <!-- Overlay permission -->
@@ -48,11 +47,11 @@
     <string name="theme">테마</string>
     <string name="quick_tools">빠른 도구</string>
     <string name="start_bubble">플로팅 버블 시작</string>
-    <string name="start_bubble_desc">플로팅 버블 + 알림 바 변환 버튼, 언제든 탭</string>
+    <string name="start_bubble_desc">가벼운 원탭 변환: Markdown ↔ WPS 클립 ↔ HTML. 알림은 유형별 좌우 짧은 버튼</string>
     <string name="usage_guide">사용 방법</string>
-    <string name="usage_step_1">위의 \"플로팅 버블 시작\"을 탭하여 활성화</string>
-    <string name="usage_step_2">AI 채팅 도구에서 Markdown 텍스트 복사</string>
-    <string name="usage_step_3">플로팅 버블 또는 알림 바 \"변환\" 버튼을 탭</string>
+    <string name="usage_step_1">「플로팅 버블 시작」을 탭하거나 알림의 변환 작업 사용</string>
+    <string name="usage_step_2">아무 앱에서나 Markdown, 웹 HTML, WPS 서식 텍스트 또는 일반 텍스트 복사</string>
+    <string name="usage_step_3">버블 메뉴 또는 알림에서 변환 선택(Markdown ↔ WPS, HTML, 웹→Markdown 등)</string>
     <string name="usage_step_4">WeChat, WPS, Feishu, DingTalk에 붙여넣기</string>
 
     <!-- Theme -->
@@ -125,4 +124,10 @@
     <string name="confirm">확인</string>
     <string name="close">닫기</string>
     <string name="copy">복사</string>
+
+    <!-- About (v1.1.0) -->
+    <string name="about">정보</string>
+    <string name="about_version">버전 %1$s</string>
+    <string name="about_description">ApexMark는 가볍고 완전히 로컬인 클립보드 변환기입니다. 플로팅 버블이나 알림에서 한 번에 Markdown, WPS용 리치 클립, HTML로 전환해 WeChat, WPS, Feishu 등에 표를 살려 붙여넣으세요. 백그라운드 클립보드 감시 없음, 네트워크 없음. v1.1.0은 알림 UI를 다듬고 기본 표를 중립적으로 유지합니다.</string>
+    <string name="clipboard_kind_remote">클립보드가 업데이트됨(유형을 읽으려면 ApexMark를 여세요)</string>
 </resources>

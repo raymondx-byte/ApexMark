@@ -2,11 +2,9 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → Rich Text · Konvertierung mit einem Tipp</string>
+    <string name="app_subtitle">Ein Tipp: Markdown ↔ WPS-Zwischenablage ↔ HTML — schneller sauber einfügen</string>
 
     <!-- Convert flow -->
-    <string name="convert_clipboard">Zwischenablage konvertieren</string>
-    <string name="convert_clipboard_content">Inhalt der Zwischenablage konvertieren</string>
     <string name="converted_success">✓ In Word-Format konvertiert</string>
     <string name="converted_success_with_count">✓ In Word-Format konvertiert (%d Zeichen)</string>
     <string name="converted_chars">✓ %d Zeichen konvertiert</string>
@@ -22,11 +20,12 @@
 
     <!-- Floating bubble -->
     <string name="bubble_running">ApexMark läuft</string>
-    <string name="bubble_description">Tippe auf die Schwebende Blase, um Markdown → Rich Text zu konvertieren</string>
+    <string name="bubble_description">Blase antippen: Menü für Markdown, WPS-Ablage oder HTML; langer Druck öffnet ApexMark</string>
     <string name="bubble_stop">Schwebende Blase schließen</string>
     <string name="bubble_started">Schwebende Blase gestartet</string>
     <string name="notification_channel_name">ApexMark Schwebender Konverter</string>
     <string name="notification_channel_desc">Hält den Dienst der Schwebenden Blase aktiv</string>
+    <string name="notif_tap_convert_hint">Tippen zum Konvertieren</string>
     <string name="notification_convert_action">Jetzt konvertieren</string>
 
     <!-- Overlay permission -->
@@ -48,11 +47,11 @@
     <string name="theme">Design</string>
     <string name="quick_tools">Schnellwerkzeuge</string>
     <string name="start_bubble">Schwebende Blase starten</string>
-    <string name="start_bubble_desc">Schwebende Blase + Konvertieren-Schaltfläche in der Benachrichtigungsleiste, jederzeit verfügbar</string>
+    <string name="start_bubble_desc">Leichtgewichtig: Markdown ↔ WPS-Zwischenablage ↔ HTML; Benachrichtigung zeigt zwei kurze Aktionen pro Zeile</string>
     <string name="usage_guide">Anleitung</string>
-    <string name="usage_step_1">Tippe oben auf \"Schwebende Blase starten\" zum Aktivieren</string>
-    <string name="usage_step_2">Markdown-Text aus KI-Chat-Tools kopieren</string>
-    <string name="usage_step_3">Tippe auf die Blase oder die \"Konvertieren\"-Schaltfläche in der Benachrichtigungsleiste</string>
+    <string name="usage_step_1">„Schwebende Blase starten“ antippen oder Aktionen in der Benachrichtigung nutzen</string>
+    <string name="usage_step_2">Markdown, Web-HTML, WPS-Richtext oder Klartext aus jeder App kopieren</string>
+    <string name="usage_step_3">Im Blasenmenü oder der Benachrichtigung die gewünschte Konvertierung wählen (Markdown ↔ WPS, HTML, Web → Markdown usw.)</string>
     <string name="usage_step_4">In WeChat, WPS, Feishu, DingTalk einfügen</string>
 
     <!-- Theme -->
@@ -125,4 +124,10 @@
     <string name="confirm">Bestätigen</string>
     <string name="close">Schließen</string>
     <string name="copy">Kopieren</string>
+
+    <!-- About (v1.1.0) -->
+    <string name="about">Über</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_description">ApexMark ist ein leichtgewichtiger, vollständig lokaler Zwischenablage-Konverter: Mit einem Tipp in der schwebenden Blase oder Benachrichtigung wechseln Sie zwischen Markdown, WPS-orientierter Rich-Text-Ablage und HTML — für saubere Tabellen und Stile in WeChat, WPS, Feishu und mehr. Kein Hintergrund-Lesen der Zwischenablage, kein Netzwerk. Version 1.1.0: klarere Benachrichtigung, neutrale Standard-Tabellen.</string>
+    <string name="clipboard_kind_remote">Zwischenablage aktualisiert (ApexMark öffnen, um den Typ zu lesen)</string>
 </resources>

@@ -1,11 +1,14 @@
 package com.apexmark
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -26,6 +29,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +44,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.apexmark.engine.ClipboardClipKind
+import com.apexmark.engine.ConvertActions
 import com.apexmark.engine.ConvertResult
+import com.apexmark.engine.ConvertUiFeedback
 import com.apexmark.engine.MarkdownConverter
 import com.apexmark.engine.StyleStyler
 import com.apexmark.service.FloatingPortalService
@@ -76,8 +84,15 @@ class MainActivity : ComponentActivity() {
         }
         if (!sharedText.isNullOrBlank()) {
             val (plain, html) = converter.convertText(sharedText)
-            converter.writeToClipboard(this, plain, html)
-            Toast.makeText(this, getString(R.string.converted_success), Toast.LENGTH_SHORT).show()
+            if (html.isNotBlank()) {
+                converter.writeToClipboard(this, plain, html)
+                ConvertUiFeedback.showCenteredToast(
+                    this,
+                    getString(R.string.converted_wps_with_count, sharedText.length)
+                )
+            } else {
+                ConvertUiFeedback.showCenteredToast(this, getString(R.string.not_markdown))
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -179,6 +194,12 @@ private fun OnboardingDialog(
                             style = MaterialTheme.typography.bodySmall, color = Apex700, lineHeight = 18.sp)
                     }
                 }
+                Text(
+                    stringResource(R.string.format_conversion_disclaimer),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    lineHeight = 18.sp
+                )
             }
         },
         confirmButton = {
@@ -233,6 +254,30 @@ private fun MainScreen(
     var showThemeSheet by remember { mutableStateOf(false) }
     var showAboutSheet by remember { mutableStateOf(false) }
     val bubbleVisible by FloatingPortalServiceLocator.bubbleVisibleFlow.collectAsState()
+    val clipboardUiEpoch by FloatingPortalServiceLocator.clipboardUiEpoch.collectAsState()
+    var clipEpoch by remember { mutableIntStateOf(0) }
+    val activity = context as? ComponentActivity
+    val resumeHandler = remember { Handler(Looper.getMainLooper()) }
+    DisposableEffect(activity) {
+        val observer = LifecycleEventObserver { _, e ->
+            if (e == Lifecycle.Event.ON_RESUME) {
+                clipEpoch++
+                resumeHandler.postDelayed({ clipEpoch++ }, 200L)
+                resumeHandler.postDelayed({ clipEpoch++ }, 600L)
+            }
+        }
+        activity?.lifecycle?.addObserver(observer)
+        onDispose {
+            activity?.lifecycle?.removeObserver(observer)
+            resumeHandler.removeCallbacksAndMessages(null)
+        }
+    }
+    val clipKind = remember(clipEpoch, clipboardUiEpoch) { converter.peekClipboardKind(context) }
+    val formatLabel = remember(clipKind) { converter.peekClipboardFormatLabelForKind(context, clipKind) }
+
+    LaunchedEffect(clipEpoch) {
+        FloatingPortalServiceLocator.requestNotificationUpdate()
+    }
 
     Scaffold(
         topBar = {
@@ -307,60 +352,172 @@ private fun MainScreen(
                 textAlign = TextAlign.Center
             )
 
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
-                onClick = {
-                    when (val result = converter.convertClipboard(context)) {
-                        is ConvertResult.Success -> {
-                            lastResult = context.getString(R.string.converted_chars, result.charCount)
-                            Toast.makeText(context, context.getString(R.string.converted_success), Toast.LENGTH_SHORT).show()
-                        }
-                        is ConvertResult.Empty -> lastResult = context.getString(R.string.clipboard_empty)
-                        is ConvertResult.NotMarkdown -> lastResult = context.getString(R.string.not_markdown)
-                        is ConvertResult.NotHtml -> lastResult = context.getString(R.string.not_html)
-                        is ConvertResult.TooLarge -> lastResult = context.getString(R.string.content_too_large, result.sizeMb)
-                        is ConvertResult.Error -> lastResult = result.message
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(54.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                Icon(Icons.Filled.ContentPaste, null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.convert_clipboard_content), fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-            }
-
+            Text(
+                stringResource(R.string.clipboard_current_type_line, formatLabel),
+                modifier = Modifier.fillMaxWidth(),
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Spacer(modifier = Modifier.height(10.dp))
 
-            OutlinedButton(
-                onClick = {
-                    when (val result = converter.convertHtmlClipboardToMarkdown(context)) {
-                        is ConvertResult.Success -> {
-                            lastResult = context.getString(R.string.converted_to_markdown_with_count, result.charCount)
-                            Toast.makeText(context,
-                                context.getString(R.string.converted_to_markdown_with_count, result.charCount),
-                                Toast.LENGTH_SHORT).show()
-                        }
-                        is ConvertResult.Empty -> lastResult = context.getString(R.string.clipboard_empty)
-                        is ConvertResult.NotMarkdown -> lastResult = context.getString(R.string.not_markdown)
-                        is ConvertResult.NotHtml -> lastResult = context.getString(R.string.not_html)
-                        is ConvertResult.TooLarge -> lastResult = context.getString(R.string.content_too_large, result.sizeMb)
-                        is ConvertResult.Error -> lastResult = result.message
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp),
-                shape = RoundedCornerShape(14.dp)
-            ) {
-                Icon(Icons.Filled.SwapHoriz, null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.convert_clipboard_reverse), fontSize = 14.sp, fontWeight = FontWeight.Medium)
+            fun runClipboardAction(action: String) {
+                val result: ConvertResult = try {
+                    converter.convertForAction(context, action)
+                } catch (e: Exception) {
+                    ConvertResult.Error(e.message ?: "")
+                }
+                val (_, msg) = ConvertUiFeedback.toastMessage(context, action, result)
+                lastResult = msg
+                clipEpoch++
+                FloatingPortalServiceLocator.requestNotificationUpdate()
+                ConvertUiFeedback.showCenteredToast(context, msg)
             }
+
+            when (clipKind) {
+                ClipboardClipKind.IMAGE -> {
+                    Text(
+                        stringResource(R.string.clipboard_image_unsupported),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                ClipboardClipKind.EMPTY -> {
+                    Text(
+                        stringResource(R.string.clipboard_empty),
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                ClipboardClipKind.MARKDOWN -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.MD_TO_WPS) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_md_wps), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.MD_TO_HTML_EMAIL) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_md_html), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                    }
+                }
+                ClipboardClipKind.HTML -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.HTML_TO_WPS) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_html_wps), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.HTML_OR_TEXT_TO_MD) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_html_text_md), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                    }
+                }
+                ClipboardClipKind.WPS -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.CLIPBOARD_TO_HTML_EMAIL) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_wps_to_html_email), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.WPS_OR_TEXT_TO_MD) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_wps_text_md), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                    }
+                }
+                ClipboardClipKind.PLAIN -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.HTML_OR_TEXT_TO_MD) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_plain_tidy_blanks), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.CLIPBOARD_TO_HTML_EMAIL) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_plain_tidy_blanks), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                    }
+                }
+                ClipboardClipKind.REMOTE_UPDATE -> {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.HTML_OR_TEXT_TO_MD) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_plain_to_md), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                        OutlinedButton(
+                            onClick = { runClipboardAction(ConvertActions.CLIPBOARD_TO_HTML_EMAIL) },
+                            modifier = Modifier.weight(1f).height(48.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp)
+                        ) {
+                            Text(stringResource(R.string.notif_clipboard_to_html_email), fontSize = 13.sp, maxLines = 2, textAlign = TextAlign.Center)
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+            Text(
+                stringResource(R.string.format_conversion_disclaimer),
+                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 18.sp
+            )
 
             AnimatedVisibility(visible = lastResult != null) {
                 lastResult?.let { msg ->
@@ -415,6 +572,7 @@ private fun MainScreen(
                     UsageStep("2", stringResource(R.string.usage_step_2))
                     UsageStep("3", stringResource(R.string.usage_step_3))
                     UsageStep("4", stringResource(R.string.usage_step_4))
+                    UsageStep("5", stringResource(R.string.usage_step_5))
                 }
             }
 
@@ -437,8 +595,8 @@ private fun AboutSheet(onDismiss: () -> Unit) {
     val context = LocalContext.current
     val versionName = remember {
         try {
-            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.0.0"
-        } catch (_: Exception) { "1.0.0" }
+            context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "1.1.0"
+        } catch (_: Exception) { "1.1.0" }
     }
     val repoUrl = stringResource(R.string.about_repo_url)
     val emailUri = stringResource(R.string.about_email)

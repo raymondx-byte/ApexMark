@@ -2,11 +2,9 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → texte enrichi · Conversion en un tap</string>
+    <string name="app_subtitle">Un tap : Markdown ↔ presse-papiers WPS ↔ HTML — collage plus propre et plus rapide</string>
 
     <!-- Convert flow -->
-    <string name="convert_clipboard">Convertir le presse-papiers</string>
-    <string name="convert_clipboard_content">Convertir le contenu du presse-papiers</string>
     <string name="converted_success">✓ Converti au format Word</string>
     <string name="converted_success_with_count">✓ Converti au format Word (%d caractères)</string>
     <string name="converted_chars">✓ %d caractères convertis</string>
@@ -22,11 +20,12 @@
 
     <!-- Floating bubble -->
     <string name="bubble_running">ApexMark en cours d\'exécution</string>
-    <string name="bubble_description">Appuyez sur la bulle flottante pour convertir Markdown → texte enrichi</string>
+    <string name="bubble_description">Touchez la bulle pour le menu : Markdown, clip WPS ou HTML en une étape ; appui long ouvre ApexMark</string>
     <string name="bubble_stop">Fermer la bulle flottante</string>
     <string name="bubble_started">Bulle flottante démarrée</string>
     <string name="notification_channel_name">Convertisseur flottant ApexMark</string>
     <string name="notification_channel_desc">Maintient le service de bulle flottante en cours d\'exécution</string>
+    <string name="notif_tap_convert_hint">Appuyez pour convertir le texte</string>
     <string name="notification_convert_action">Convertir</string>
 
     <!-- Overlay permission -->
@@ -48,11 +47,11 @@
     <string name="theme">Thème</string>
     <string name="quick_tools">Outils rapides</string>
     <string name="start_bubble">Démarrer la bulle flottante</string>
-    <string name="start_bubble_desc">Bulle flottante + bouton de conversion dans la barre de notifications, disponible à tout moment</string>
+    <string name="start_bubble_desc">Conversion légère en un tap : Markdown ↔ clip WPS ↔ HTML ; la notification affiche deux actions courtes par ligne</string>
     <string name="usage_guide">Guide d\'utilisation</string>
-    <string name="usage_step_1">Appuyez sur « Démarrer la bulle flottante » ci-dessus pour activer</string>
-    <string name="usage_step_2">Copiez le texte Markdown depuis les outils de chat IA</string>
-    <string name="usage_step_3">Appuyez sur la bulle ou le bouton « Convertir » de la barre de notifications</string>
+    <string name="usage_step_1">Touchez « Démarrer la bulle flottante » ou utilisez les actions de la notification</string>
+    <string name="usage_step_2">Copiez du Markdown, du HTML web, du texte riche WPS ou du texte brut depuis n\'importe quelle app</string>
+    <string name="usage_step_3">Choisissez la conversion dans le menu de la bulle ou la notification (Markdown ↔ WPS, HTML, Web → Markdown, etc.)</string>
     <string name="usage_step_4">Collez dans WeChat, WPS, Feishu, DingTalk</string>
 
     <!-- Theme -->
@@ -125,4 +124,10 @@
     <string name="confirm">Confirmer</string>
     <string name="close">Fermer</string>
     <string name="copy">Copier</string>
+
+    <!-- About (v1.1.0) -->
+    <string name="about">À propos</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_description">ApexMark est un convertisseur de presse-papiers léger et 100 % local : un tap depuis la bulle ou la notification bascule entre Markdown, le clip riche style WPS et le HTML, pour coller tableaux et styles dans WeChat, WPS, Feishu et plus encore. Pas de lecture en arrière-plan, pas de réseau. La v1.1.0 clarifie la notification et garde les tableaux par défaut neutres.</string>
+    <string name="clipboard_kind_remote">Presse-papiers mis à jour (ouvrez ApexMark pour lire le type)</string>
 </resources>

@@ -2,11 +2,9 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → texto enriquecido · Conversión con un toque</string>
+    <string name="app_subtitle">Un toque: Markdown ↔ portapapeles WPS ↔ HTML — pega formato limpio más rápido</string>
 
     <!-- Convert flow -->
-    <string name="convert_clipboard">Convertir portapapeles</string>
-    <string name="convert_clipboard_content">Convertir contenido del portapapeles</string>
     <string name="converted_success">✓ Convertido a formato Word</string>
     <string name="converted_success_with_count">✓ Convertido a formato Word (%d caracteres)</string>
     <string name="converted_chars">✓ %d caracteres convertidos</string>
@@ -22,11 +20,12 @@
 
     <!-- Floating bubble -->
     <string name="bubble_running">ApexMark en ejecución</string>
-    <string name="bubble_description">Toca la burbuja flotante para convertir Markdown → texto enriquecido</string>
+    <string name="bubble_description">Toca la burbuja para el menú: Markdown, clip WPS o HTML en un paso; pulsación larga abre ApexMark</string>
     <string name="bubble_stop">Cerrar burbuja flotante</string>
     <string name="bubble_started">Burbuja flotante iniciada</string>
     <string name="notification_channel_name">Convertidor flotante de ApexMark</string>
     <string name="notification_channel_desc">Mantiene el servicio de burbuja flotante en ejecución</string>
+    <string name="notif_tap_convert_hint">Toca para convertir texto</string>
     <string name="notification_convert_action">Convertir ahora</string>
 
     <!-- Overlay permission -->
@@ -48,11 +47,11 @@
     <string name="theme">Tema</string>
     <string name="quick_tools">Herramientas rápidas</string>
     <string name="start_bubble">Iniciar burbuja flotante</string>
-    <string name="start_bubble_desc">Burbuja flotante + botón de conversión en la barra de notificaciones, disponible en cualquier momento</string>
+    <string name="start_bubble_desc">Conversión ligera con un toque: Markdown ↔ clip WPS ↔ HTML; la notificación muestra dos acciones cortas por fila</string>
     <string name="usage_guide">Cómo usar</string>
-    <string name="usage_step_1">Toca \"Iniciar burbuja flotante\" arriba para activar</string>
-    <string name="usage_step_2">Copia texto Markdown desde herramientas de chat con IA</string>
-    <string name="usage_step_3">Toca la burbuja o el botón \"Convertir\" de la barra de notificaciones</string>
+    <string name="usage_step_1">Toca \"Iniciar burbuja flotante\" o usa las acciones de la notificación</string>
+    <string name="usage_step_2">Copia Markdown, HTML web, texto enriquecido de WPS o texto plano desde cualquier app</string>
+    <string name="usage_step_3">Elige la conversión en el menú de la burbuja o la notificación (Markdown ↔ WPS, HTML, Web → Markdown, etc.)</string>
     <string name="usage_step_4">Pega en WeChat, WPS, Feishu, DingTalk</string>
 
     <!-- Theme -->
@@ -125,4 +124,10 @@
     <string name="confirm">Confirmar</string>
     <string name="close">Cerrar</string>
     <string name="copy">Copiar</string>
+
+    <!-- About (v1.1.0) -->
+    <string name="about">Acerca de</string>
+    <string name="about_version">Versión %1$s</string>
+    <string name="about_description">ApexMark es un convertidor del portapapeles ligero y totalmente local: un toque desde la burbuja o la notificación alterna entre Markdown, clip enriquecido estilo WPS y HTML, para pegar tablas y estilos en WeChat, WPS, Feishu y más. Sin lectura en segundo plano, sin red. La v1.1.0 simplifica la notificación y mantiene las tablas predeterminadas neutras.</string>
+    <string name="clipboard_kind_remote">Portapapeles actualizado (abre ApexMark para leer el tipo)</string>
 </resources>

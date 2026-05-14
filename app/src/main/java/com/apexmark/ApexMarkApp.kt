@@ -5,7 +5,11 @@ import android.app.Application
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import com.apexmark.service.ClipboardPeekActivity
 import com.apexmark.service.FloatingPortalService
+import com.apexmark.service.NotificationMenuActivity
+import com.apexmark.service.FloatingPortalServiceLocator
+import com.apexmark.engine.MarkdownConverter
 import com.apexmark.ui.theme.ThemePreference
 
 class ApexMarkApp : Application() {
@@ -27,12 +31,30 @@ object AppForegroundTracker : Application.ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
     override fun onActivityStarted(activity: Activity) {
-        if (activity !is com.apexmark.service.ClipboardConvertActivity) visibleActivities++
+        if (activity !is com.apexmark.service.ClipboardConvertActivity &&
+            activity !is ClipboardPeekActivity &&
+            activity !is NotificationMenuActivity
+        ) {
+            visibleActivities++
+        }
     }
-    override fun onActivityResumed(activity: Activity) {}
+    override fun onActivityResumed(activity: Activity) {
+        if (activity !is com.apexmark.service.ClipboardConvertActivity &&
+            activity !is ClipboardPeekActivity &&
+            activity !is NotificationMenuActivity
+        ) {
+            if (activity is MainActivity) {
+                MarkdownConverter.discardPendingPeekAfterClipboardChanged()
+            }
+            FloatingPortalServiceLocator.requestNotificationUpdate()
+        }
+    }
     override fun onActivityPaused(activity: Activity) {}
     override fun onActivityStopped(activity: Activity) {
-        if (activity !is com.apexmark.service.ClipboardConvertActivity) {
+        if (activity !is com.apexmark.service.ClipboardConvertActivity &&
+            activity !is ClipboardPeekActivity &&
+            activity !is NotificationMenuActivity
+        ) {
             visibleActivities = (visibleActivities - 1).coerceAtLeast(0)
         }
     }

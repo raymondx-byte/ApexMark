@@ -2,11 +2,9 @@
 <resources>
     <!-- App -->
     <string name="app_name">ApexMark</string>
-    <string name="app_subtitle">Markdown → texto formatado · Conversão com um toque</string>
+    <string name="app_subtitle">Um toque: Markdown ↔ clip WPS ↔ HTML — cole formatação limpa mais rápido</string>
 
     <!-- Fluxo de conversão -->
-    <string name="convert_clipboard">Converter área de transferência</string>
-    <string name="convert_clipboard_content">Converter conteúdo da área de transferência</string>
     <string name="converted_success">✓ Convertido para formato Word</string>
     <string name="converted_success_with_count">✓ Convertido para formato Word (%d caracteres)</string>
     <string name="converted_chars">✓ %d caracteres convertidos</string>
@@ -22,11 +20,12 @@
 
     <!-- Bolha flutuante -->
     <string name="bubble_running">ApexMark em execução</string>
-    <string name="bubble_description">Toque na bolha flutuante para converter Markdown → texto formatado</string>
+    <string name="bubble_description">Toque na bolha para o menu: Markdown, clip WPS ou HTML em um passo; toque longo abre o ApexMark</string>
     <string name="bubble_stop">Fechar bolha flutuante</string>
     <string name="bubble_started">Bolha flutuante iniciada</string>
     <string name="notification_channel_name">ApexMark Conversor Flutuante</string>
     <string name="notification_channel_desc">Mantém o serviço da bolha flutuante em execução</string>
+    <string name="notif_tap_convert_hint">Toque para converter texto</string>
     <string name="notification_convert_action">Converter agora</string>
 
     <!-- Permissão de sobreposição -->
@@ -48,11 +47,11 @@
     <string name="theme">Tema</string>
     <string name="quick_tools">Ferramentas rápidas</string>
     <string name="start_bubble">Iniciar bolha flutuante</string>
-    <string name="start_bubble_desc">Bolha flutuante + botão de conversão na barra de notificações, disponível a qualquer momento</string>
+    <string name="start_bubble_desc">Conversão leve com um toque: Markdown ↔ clip WPS ↔ HTML; a notificação mostra duas ações curtas por linha</string>
     <string name="usage_guide">Como usar</string>
-    <string name="usage_step_1">Toque em \"Iniciar bolha flutuante\" acima para ativar</string>
-    <string name="usage_step_2">Copie o texto Markdown das ferramentas de chat com IA</string>
-    <string name="usage_step_3">Toque na bolha ou no botão \"Converter\" da barra de notificações</string>
+    <string name="usage_step_1">Toque em \"Iniciar bolha flutuante\" ou use as ações na notificação</string>
+    <string name="usage_step_2">Copie Markdown, HTML da web, texto rico do WPS ou texto simples de qualquer app</string>
+    <string name="usage_step_3">Escolha a conversão no menu da bolha ou na notificação (Markdown ↔ WPS, HTML, Web → Markdown, etc.)</string>
     <string name="usage_step_4">Cole no WeChat, WPS, Feishu, DingTalk</string>
 
     <!-- Tema -->
@@ -125,4 +124,10 @@
     <string name="confirm">Confirmar</string>
     <string name="close">Fechar</string>
     <string name="copy">Copiar</string>
+
+    <!-- About (v1.1.0) -->
+    <string name="about">Sobre</string>
+    <string name="about_version">Versão %1$s</string>
+    <string name="about_description">O ApexMark é um conversor de área de transferência leve e totalmente local: um toque na bolha ou na notificação alterna entre Markdown, clip rico estilo WPS e HTML, para colar tabelas e estilos no WeChat, WPS, Feishu e mais. Sem leitura em segundo plano, sem rede. A v1.1.0 simplifica a notificação e mantém tabelas padrão neutras.</string>
+    <string name="clipboard_kind_remote">Área de transferência atualizada (abra o ApexMark para ler o tipo)</string>
 </resources>
